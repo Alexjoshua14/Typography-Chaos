@@ -17,10 +17,10 @@ export async function getChaosCoordinates(text: string) {
     if (res.ok) {
       const result = await res.json()
       console.log(result)
-      return result.result
-      // const points = ChaosServerResponse.parse(result)
 
-      // return points.result
+      const points = ChaosServerResponse.parse(result)
+
+      return points.result
     } else {
       console.log('Server responded with an error:', res.status)
     }
