@@ -1,0 +1,8 @@
+
+Welcome to Chaos Session!
+
+The left pane is running the python server
+
+The right pane is running the nextjs server
+
+To gracefully end the session run `./shutdown'
