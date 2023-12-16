@@ -17,11 +17,16 @@ const Point = (coordinates: Coordinate) => (
   <div className={`absolute w-1 h-1 rounded-full bg-teal-600`} style={{ left: `${coordinates[0] * scale}px`, top: `${coordinates[1] * scale}px` }} />
 )
 
+/**
+ * TODO: Add some jitter via keyframes
+ * @param coordinates 
+ * @returns 
+ */
 const MotionPoint = (coordinates: Coordinate) => (
   <motion.div className={`absolute w-1 h-1 rounded-full bg-fuchsia-600`}
     initial={{ x: `${coordinates[0] * scale * ((Math.random() / 2) - .125)}px`, y: `${coordinates[1] * scale}px` }}
     animate={{ x: `${coordinates[0] * scale}px`, y: `${coordinates[1] * scale}px` }}
-    transition={{ duration: 2, ease: 'easeInOut' }}
+    transition={{ duration: 1.4, ease: 'easeInOut', repeat: Infinity, repeatDelay: 5 }}
   />
 )
 
