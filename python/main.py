@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Tuple
 
-from render_text import text_to_point_coordinates
+from python.chaos.render_text import text_to_point_coordinates
 
 app = FastAPI()
 
