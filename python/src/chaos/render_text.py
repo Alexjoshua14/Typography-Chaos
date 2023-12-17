@@ -7,16 +7,17 @@ from models.chaosCharacter import ChaosCharacter
 from models.point import Point
 from models.boundingBox import BoundingBox
 
+## Takes in font name and weight
+## Returns path to font file
 def get_font_file(font_name: str, weight: str) -> str:
   current_dir = os.path.dirname(os.path.realpath(__file__))
   font_dir = os.path.join(current_dir, "../../../fonts")
   font_file = os.path.join(font_dir, font_name, "static", font_name + "-" + weight + ".ttf")
   return font_file
 
-## TODO: Clean up this comment
-# Takes in text string, desired font, and pixel density
-# Returns coordinates for points that form the given text with the given pixel density
-# Also returns bounding box for text
+## Takes in text string
+## Renders text to image and returns a list of points representing the text
+## NOTE: Coordinates are based on top-left
 def text_to_point_coordinates(text):
   font_path = get_font_file("Montserrat", "Regular")
   image = render_text_to_image(text, font_path, "../../../renders/rendered_image.png")
@@ -34,7 +35,8 @@ def text_to_point_coordinates(text):
   #return points
   return chaosCharacter
 
-
+## Takes in text string, font path, and output path
+## Renders text to image and saves it to output path
 def render_text_to_image(text, font_path, output_path) -> Image.Image:
   # Begin instantiating font by loading ttf file and determining
   # the size of the bounding box around our desired text string
@@ -57,6 +59,8 @@ def render_text_to_image(text, font_path, output_path) -> Image.Image:
   
   return image
   
+## Takes in an image and returns a matrix of pixels
+## Each pixel is a tuple of (R, G, B) values
 def image_to_pixel_matrix(image: Image.Image) -> List[List[Tuple[int, int, int]]]:
   # Get pixel data from the image
   pixel_data = list(image.getdata())
@@ -69,6 +73,8 @@ def image_to_pixel_matrix(image: Image.Image) -> List[List[Tuple[int, int, int]]
   
   return pixel_matrix
 
+## Takes in a matrix of pixels and prints it to the console
+## NOTE: Optimized for black and white
 def print_pixel_matrix(pixel_matrix: list[list]):
   for row in pixel_matrix:
       rowString = ""
@@ -102,6 +108,7 @@ def pixel_matrix_point_coordinates(pixel_matrix: list[list]) -> List[Point]:
         
   return points
 
+## Takes in a list of points and plots them on a graph
 def plot_points(point_coordinates: List[Point]):
   x_coordinates, y_coordinates = zip(*point_coordinates)
   
