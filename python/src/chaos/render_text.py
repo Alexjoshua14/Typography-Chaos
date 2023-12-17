@@ -1,23 +1,35 @@
 from PIL import Image, ImageDraw, ImageFont
 from typing import List, Tuple
 import matplotlib.pyplot as plt
+import os
 
-from ..models.chaosCharacter import ChaosCharacter
-from ..models.point import Point
+from models.chaosCharacter import ChaosCharacter
+from models.point import Point
+from models.boundingBox import BoundingBox
 
+def get_font_file(font_name: str, weight: str) -> str:
+  current_dir = os.path.dirname(os.path.realpath(__file__))
+  font_dir = os.path.join(current_dir, "../../../fonts")
+  font_file = os.path.join(font_dir, font_name, "static", font_name + "-" + weight + ".ttf")
+  return font_file
 
 ## TODO: Clean up this comment
 # Takes in text string, desired font, and pixel density
 # Returns coordinates for points that form the given text with the given pixel density
 # Also returns bounding box for text
 def text_to_point_coordinates(text):
-  image = render_text_to_image(text, "../fonts/Montserrat/static/Montserrat-Medium.ttf", "./renders/rendered_image.png")
+  font_path = get_font_file("Montserrat", "Regular")
+  image = render_text_to_image(text, font_path, "../../../renders/rendered_image.png")
   pixel_matrix = image_to_pixel_matrix(image)
-  print("Here is the pixel matrix " + pixel_matrix)
+  
+  # Print the pixel matrix
+  print_pixel_matrix(pixel_matrix)
     
   points = pixel_matrix_point_coordinates(pixel_matrix)
   
-  chaosCharacter = ChaosCharacter(image.size(), points)
+  boundingBox: BoundingBox = BoundingBox(*image.size)
+  
+  chaosCharacter = ChaosCharacter(boundingBox, points)
   
   #return points
   return chaosCharacter
@@ -73,14 +85,17 @@ def print_pixel_matrix(pixel_matrix: list[list]):
 ## NOTE: Coordinates are based on top-left
 ## NOTE: Optimized for black and white
 def pixel_matrix_point_coordinates(pixel_matrix: list[list]) -> List[Point]:
-  points = List[Point]
+  points: List[Point] = list()
   x = 0
   y = 0
   
+  # Iterate through each pixel in the matrix and check if it is black
+  # If it is black, add it to the list of points
   for row in pixel_matrix:
     x = 0
     for point in row:
       if (point[0] + point[1] + point[2] == 0):
+        # Add point to list of points
         points.append(Point(x, y))
       x += 1  
     y += 1

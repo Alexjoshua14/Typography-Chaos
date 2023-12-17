@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+src/chaos/__init__.py
+src/chaos/render_text.py
+src/tests/__init__.py
+src/tests/test_script.py
+src/typography_chaos.egg-info/PKG-INFO
+src/typography_chaos.egg-info/SOURCES.txt
+src/typography_chaos.egg-info/dependency_links.txt
+src/typography_chaos.egg-info/top_level.txt
