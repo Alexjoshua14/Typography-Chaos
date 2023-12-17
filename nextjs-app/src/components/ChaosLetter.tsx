@@ -4,17 +4,17 @@ import { FC, useEffect, useState } from 'react'
 
 import { motion } from 'framer-motion'
 
-import { Coordinate } from '@/lib/validators/Coordinate'
+import { Point } from '@/lib/validators/Point'
 
 interface ChaosLetterProps {
   letter: string,
-  points: Coordinate[] | null
+  points: Point[] | null
 }
 
 const scale = 3
 const randomness = 7
 
-const Point = (coordinates: Coordinate) => (
+const Point = (coordinates: Point) => (
   <div className={`absolute w-1 h-1 rounded-full bg-teal-600`} style={{ left: `${coordinates[0] * scale}px`, top: `${coordinates[1] * scale}px` }} />
 )
 
@@ -23,7 +23,7 @@ const Point = (coordinates: Coordinate) => (
  * @param coordinates 
  * @returns 
  */
-const MotionPoint = (coordinates: Coordinate, randomXJitter?: number, randomYJitter?: number) => {
+const MotionPoint = (coordinates: Point, randomXJitter?: number, randomYJitter?: number) => {
   console.log(randomXJitter)
   const actualX = coordinates[0] * scale;
   const actualY = coordinates[1] * scale;

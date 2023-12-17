@@ -1,20 +1,22 @@
 import { getChaosCoordinates } from '@/lib/ChaosCoordinates'
 import { FC } from 'react'
 import ChaosLetter from './ChaosLetter'
-import { Coordinate } from '@/lib/validators/Coordinate'
+import { Point } from '@/lib/validators/Point'
 
 interface ChaosStringProps {
   text: string
 }
 
 /** TODO: Determine if promises are simultaneous or sequential */
-async function fetchLetters(text: String): Promise<Map<String, Coordinate[] | null>> {
-  let letters = new Map<String, Coordinate[] | null>()
+async function fetchLetters(text: String): Promise<Map<String, Point[] | null>> {
+  let letters = new Map<String, Point[] | null>()
 
   for (const letter of text.split('')) {
     if (!letters.has(letter)) {
       console.log(`Getting letter: ${letter}`)
-      const coords = await getChaosCoordinates(letter)
+      const res = await getChaosCoordinates(letter)
+      console.log("Response: " + res)
+      const coords = res?.points ?? null
       letters.set(letter, coords)
     }
   }

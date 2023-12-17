@@ -1,6 +1,6 @@
 'use server'
 
-import { ChaosServerResponse } from "./validators/Coordinate"
+import { ChaosServerResponse } from "./validators/ChaosServer"
 
 const PYTHON_SERVER = "http://localhost:8000/chaos-letter"
 
@@ -25,6 +25,7 @@ export async function getChaosCoordinates(text: string) {
       console.log('Server responded with an error:', res.status)
     }
   } catch (err) {
+    console.log("WHooops")
     console.log(err)
   }
 
