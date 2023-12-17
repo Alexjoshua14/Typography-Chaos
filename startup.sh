@@ -16,5 +16,5 @@ tmux send-keys -t chaos_session:0.0 "uvicorn main:app --reload" C-m
 tmux display-message -tp chaos_session:0.1 "Starting up nextjs application"
 tmux send-keys -t chaos_session:0.1 "cd nextjs-app &&  bun dev" C-m
 
-tmux send-keys -t chaos_session:0.2 "cat bash/messages/welcome && code . && cmatrix" C-m
+tmux send-keys -t chaos_session:0.2 "source python/venv/bin/activate && cat bash/messages/welcome && code . && cmatrix" C-m
 tmux attach-session -t chaos_session:0.2
