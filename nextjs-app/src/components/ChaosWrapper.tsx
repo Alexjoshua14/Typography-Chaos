@@ -29,7 +29,6 @@ const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text }) => {
   const animationFrames: Point[][] = []
 
   // Generate animation frames
-
   const finalAnimationFrame: Point[] = []
 
   let leftOffset = 0

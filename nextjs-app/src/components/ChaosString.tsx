@@ -66,26 +66,5 @@ const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrame
     </div>
   )
 }
-// const ChaosString: FC<ChaosStringProps> = async ({ text, chaosDictionary }) => {
-
-//   return (
-//     <div className="flex w-fit">
-//       {text.split('').map((letter, index) => {
-//         const { points, bounding_box } =
-//           chaosDictionary.get(letter) ??
-//           { points: null, bounding_box: { width: 0, height: 0 } }
-
-//         return (
-//           <ChaosLetter
-//             key={`${text}-${letter}-${index}`}
-//             letter={letter}
-//             points={points}
-//             bounding_box={bounding_box}
-//           />
-//         )
-//       })}
-//     </div>
-//   )
-// }
 
 export default ChaosString
