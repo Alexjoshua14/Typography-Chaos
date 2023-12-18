@@ -1,6 +1,5 @@
 import { FC } from 'react'
 
-
 import { Point } from '@/lib/validators/Point'
 import { BoundingBox } from '@/lib/validators/BoundingBox'
 

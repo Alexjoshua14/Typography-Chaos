@@ -28,8 +28,6 @@ export class ChaosDictionary {
   }
 
   get(letter: String): ChaosCharacter | null {
-    console.log("Getting letter: " + letter)
-    console.log("Dict: " + JSON.stringify(this.dict.get(letter)))
     return this.dict.get(letter) ?? null
   }
 

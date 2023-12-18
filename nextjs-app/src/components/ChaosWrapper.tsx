@@ -7,17 +7,21 @@ import { ChaosDictionary } from '@/lib/ChaosDictionary'
 import { Point } from '@/lib/validators/Point'
 import { chaosPosition, randomPosition } from '@/lib/ChaosPointAnimation'
 
-const FRAME_RATE = 24
-const FRAME_COUNT = FRAME_RATE * 8
+const DEFAULT_FRAME_RATE = 24
+const DEFAULT_DURATION = 8
 
 interface ChaosWrapperProps {
   text: string
+  duration?: number
+  frameRate?: number
 }
 
-const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text }) => {
+const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE }) => {
+  const frameCount = duration * frameRate
+
   let chaosDictionary = new ChaosDictionary()
   await chaosDictionary.fetchLetters(text)
-  console.log(chaosDictionary)
+  // console.log(chaosDictionary)
 
   let width = 0
   let height = 0
@@ -54,10 +58,10 @@ const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text }) => {
     })
   })
 
-  for (let i = 1; i < FRAME_COUNT; i++) {
+  for (let i = 1; i < frameCount; i++) {
     const animationFrame: Point[] = []
     for (let j = 0; j < finalAnimationFrame.length; j++) {
-      animationFrame.push(chaosPosition(initialAnimationFrame[j], finalAnimationFrame[j], i, FRAME_COUNT))
+      animationFrame.push(chaosPosition(initialAnimationFrame[j], finalAnimationFrame[j], i, frameCount))
     }
     animationFrames.push(animationFrame)
   }
@@ -68,7 +72,7 @@ const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text }) => {
 
 
   return (
-    <ChaosString text={text} animationFrames={animationFrames} width={width} height={height} frameCount={FRAME_COUNT} frameRate={FRAME_RATE} />
+    <ChaosString text={text} animationFrames={animationFrames} width={width} height={height} frameCount={frameCount} frameRate={frameRate} />
   )
 }
 
