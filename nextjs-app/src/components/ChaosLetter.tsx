@@ -16,10 +16,10 @@ interface ChaosLetterProps {
 }
 
 const scale = 1
-const randomness = 7
+const randomness = 1
 
 const Point = (coordinates: Point) => (
-  <div className={`absolute w-1 h-1 rounded-full bg-teal-600`} style={{ left: `${coordinates[0] * scale}px`, top: `${coordinates[1] * scale}px` }} />
+  <div className={`absolute w-[1px] h-[1px] rounded-full bg-teal-600`} style={{ left: `${coordinates[0] * scale}px`, top: `${coordinates[1] * scale}px` }} />
 )
 let stamp = 0
 
@@ -54,7 +54,7 @@ const MotionPoint = (coordinates: Point, randomXJitter?: number, randomYJitter?:
 
 
   return (
-    <motion.div className={`absolute w-1 h-1 bg-fuchsia-600`}
+    <motion.div className={`absolute w-[1px] h-[1px] bg-fuchsia-600`}
       initial={{ x: x, y: y }}
       // animate={{ x: x, y: y }}
       transition={{ duration: 2.4, ease: 'linear', repeat: Infinity }}
@@ -65,14 +65,14 @@ const MotionPoint = (coordinates: Point, randomXJitter?: number, randomYJitter?:
 const ChaosLetter: FC<ChaosLetterProps> = ({ letter, points, bounding_box }) => {
   return (
     <motion.div
-      className="relative border-2 border-yellow-700"
+      className="relative"
       style={{ width: bounding_box?.width, height: bounding_box?.height }}
       aria-description={`Letter ${letter} in pixelated form`}
     >
       {points?.map((coord) => {
         return (
           <span key={`${letter}-${stamp++}`}>
-            {MotionPoint(coord, (10 * Math.random() / randomness), (10 * Math.random() / randomness))}
+            {Point(coord)}
           </span>
         )
       })}
