@@ -40,7 +40,7 @@ def text_to_point_coordinates(text):
 def render_text_to_image(text, font_path, output_path) -> Image.Image:
   # Begin instantiating font by loading ttf file and determining
   # the size of the bounding box around our desired text string
-  font_size = 30
+  font_size = 96
   font = ImageFont.truetype(font_path, font_size)
   _, _, text_width, text_height = font.getbbox(text)
   
