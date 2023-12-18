@@ -5,18 +5,23 @@ import { FC, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { Point } from '@/lib/validators/Point'
+import { BoundingBox } from '@/lib/validators/BoundingBox'
+
+import { useScroll } from 'framer-motion'
 
 interface ChaosLetterProps {
   letter: string,
   points: Point[] | null
+  bounding_box?: BoundingBox
 }
 
-const scale = 3
+const scale = 1
 const randomness = 7
 
 const Point = (coordinates: Point) => (
   <div className={`absolute w-1 h-1 rounded-full bg-teal-600`} style={{ left: `${coordinates[0] * scale}px`, top: `${coordinates[1] * scale}px` }} />
 )
+let stamp = 0
 
 /**
  * TODO: Add some jitter via keyframes
@@ -24,12 +29,17 @@ const Point = (coordinates: Point) => (
  * @returns 
  */
 const MotionPoint = (coordinates: Point, randomXJitter?: number, randomYJitter?: number) => {
-  console.log(randomXJitter)
-  const actualX = coordinates[0] * scale;
-  const actualY = coordinates[1] * scale;
+  // captures value of stamp at time of function call and increments stamp
+  // to uniquely identify each point
+  const visa = stamp++
 
-  const [initialX, setInitialX] = useState(actualX * (randomXJitter ?? 1));
-  const [initialY, setInitialY] = useState(actualY * (randomYJitter ?? 1));
+  const x = coordinates[0]
+  const y = coordinates[1]
+
+  if (visa === 0) {
+    console.log("Visa:" + visa + " - " + x)
+
+  }
 
   // useEffect(() => {
   //   // Set the initial X value on the initial render
@@ -44,25 +54,27 @@ const MotionPoint = (coordinates: Point, randomXJitter?: number, randomYJitter?:
 
 
   return (
-    <motion.div className={`absolute w-1 h-1 rounded-full bg-fuchsia-600`}
-      animate={{ x: [initialX, actualX, initialX], y: [initialY, actualY, initialY] }}
-      transition={{ duration: 2.4, ease: 'easeInOut', repeat: Infinity }}
+    <motion.div className={`absolute w-1 h-1 bg-fuchsia-600`}
+      initial={{ x: x, y: y }}
+      // animate={{ x: x, y: y }}
+      transition={{ duration: 2.4, ease: 'linear', repeat: Infinity }}
     />
   )
 }
 
-const ChaosLetter: FC<ChaosLetterProps> = ({ letter, points }) => {
-  // const points = letterDictionary.get('A')
-  if (points === null) {
-    console.error("Points is null..")
-  } else {
-    console.log("Points to be used: ", points)
-  }
-
+const ChaosLetter: FC<ChaosLetterProps> = ({ letter, points, bounding_box }) => {
   return (
-    <motion.div className="relative h-28 w-28 border-2 border-yellow-700" aria-description={`Letter ${letter} in pixelated form`}>
+    <motion.div
+      className="relative border-2 border-yellow-700"
+      style={{ width: bounding_box?.width, height: bounding_box?.height }}
+      aria-description={`Letter ${letter} in pixelated form`}
+    >
       {points?.map((coord) => {
-        return MotionPoint(coord, (1 + (-0.5 + Math.random()) / randomness), (1 + (-0.5 + Math.random()) / randomness))
+        return (
+          <span key={`${letter}-${stamp++}`}>
+            {MotionPoint(coord, (10 * Math.random() / randomness), (10 * Math.random() / randomness))}
+          </span>
+        )
       })}
     </motion.div>
   )
