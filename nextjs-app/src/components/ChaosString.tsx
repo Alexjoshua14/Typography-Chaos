@@ -3,31 +3,12 @@ import { FC } from 'react'
 import ChaosLetter from './ChaosLetter'
 import { Point } from '@/lib/validators/Point'
 import { ChaosCharacter } from '@/lib/validators/ChaosCharacter'
+import { ChaosDictionary } from '@/lib/ChaosDictionary'
 
 interface ChaosStringProps {
   text: string
+  chaosDictionary: ChaosDictionary
 }
-
-/** TODO: Determine if promises are simultaneous or sequential */
-async function fetchLetters(text: String): Promise<Map<String, ChaosCharacter | null>> {
-  let letters = new Map<String, ChaosCharacter | null>()
-
-  for (const letter of text.split('')) {
-    if (!letters.has(letter)) {
-      console.log(`Getting letter: ${letter}`)
-      const chaosCharacter = await getChaosCoordinates(letter)
-      console.log("Here: " + JSON.stringify(chaosCharacter))
-      if (chaosCharacter === null) {
-        console.error("Chaos character is null")
-      } else
-        letters.set(letter, chaosCharacter)
-    }
-    console.log("\n")
-  }
-
-  return letters
-}
-
 
 /**
  * Converts a text into a string of chaos letters
@@ -35,15 +16,24 @@ async function fetchLetters(text: String): Promise<Map<String, ChaosCharacter | 
  * @param param0 
  * @returns 
  */
-const ChaosString: FC<ChaosStringProps> = async ({ text }) => {
-  const letters = await fetchLetters(text)
-
+const ChaosString: FC<ChaosStringProps> = async ({ text, chaosDictionary }) => {
 
   return (
     <div className="flex w-fit">
-      {text.split('').map((letter, index) => (
-        <ChaosLetter key={`${text}-${letter}-${index}`} letter={letter} points={letters.get(letter)?.points ?? null} />
-      ))}
+      {text.split('').map((letter, index) => {
+        const { points, bounding_box } =
+          chaosDictionary.get(letter) ??
+          { points: null, bounding_box: { width: 0, height: 0 } }
+
+        return (
+          <ChaosLetter
+            key={`${text}-${letter}-${index}`}
+            letter={letter}
+            points={points}
+            bounding_box={bounding_box}
+          />
+        )
+      })}
     </div>
   )
 }
