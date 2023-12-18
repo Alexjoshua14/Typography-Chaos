@@ -11,12 +11,13 @@ export async function getChaosCoordinates(text: string) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ input_string: text })
+      body: JSON.stringify({ input_string: text }),
+      cache: 'no-cache',
     })
 
     if (res.ok) {
       const result = await res.json()
-      console.log(result)
+      console.log("Result" + JSON.stringify(result))
 
       const points = ChaosServerResponse.parse(result)
 
@@ -25,8 +26,8 @@ export async function getChaosCoordinates(text: string) {
       console.log('Server responded with an error:', res.status)
     }
   } catch (err) {
-    console.log("WHooops")
-    console.log(err)
+    // console.log("WHooops")
+    // console.log(err)
   }
 
   return null
