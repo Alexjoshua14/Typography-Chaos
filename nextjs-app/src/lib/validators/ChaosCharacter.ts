@@ -5,7 +5,7 @@ import { PointSchema } from "./Point";
 
 export const ChaosCharacterSchema = z.object({
   bounding_box: BoundingBoxSchema,
-  letter: z.string(),
+  // letter: z.string(),
   points: z.array(PointSchema),
 });
 

@@ -17,9 +17,11 @@ export async function getChaosCoordinates(text: string) {
 
     if (res.ok) {
       const result = await res.json()
-      console.log("Result" + JSON.stringify(result))
+      console.log("Result: " + JSON.stringify(result))
 
+      console.log("Parsing result")
       const points = ChaosServerResponse.parse(result)
+      console.log("Points: " + points)
 
       return points.result
     } else {
@@ -27,7 +29,7 @@ export async function getChaosCoordinates(text: string) {
     }
   } catch (err) {
     // console.log("WHooops")
-    // console.log(err)
+    console.log(err)
   }
 
   return null

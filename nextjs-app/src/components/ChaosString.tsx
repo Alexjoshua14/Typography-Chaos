@@ -16,12 +16,13 @@ async function fetchLetters(text: String): Promise<Map<String, ChaosCharacter | 
     if (!letters.has(letter)) {
       console.log(`Getting letter: ${letter}`)
       const chaosCharacter = await getChaosCoordinates(letter)
-      // console.log("Response: " + res)
+      console.log("Here: " + JSON.stringify(chaosCharacter))
       if (chaosCharacter === null) {
         console.error("Chaos character is null")
       } else
-        letters.set(letter, { ...chaosCharacter, letter: letter })
+        letters.set(letter, chaosCharacter)
     }
+    console.log("\n")
   }
 
   return letters
