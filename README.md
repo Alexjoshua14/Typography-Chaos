@@ -1,9 +1,8 @@
 # Welcome to Typography Chaos
 
 ## Demo
-https://github.com/Alexjoshua14/Typography-Chaos/assets/59298565/dedc41b5-5dca-4cd9-b7e6-7d61ccfede9a
 
-
+https://github.com/Alexjoshua14/Typography-Chaos/assets/59298565/908ca860-aefa-4581-ac04-2e8047b57811
 
 ## Starting up dev session
 
