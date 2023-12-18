@@ -1,5 +1,10 @@
 # Welcome to Typography Chaos
 
+## Demo
+https://github.com/Alexjoshua14/Typography-Chaos/assets/59298565/dedc41b5-5dca-4cd9-b7e6-7d61ccfede9a
+
+
+
 ## Starting up dev session
 
 Run `./startup` to startup python backend server, nextjs server, and a open a code editor. Note that the startup script expects cmatrix to be installed but is not required, it simply adds a little flair.
