@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, Union
 
 from chaos.render_text import text_to_point_coordinates
 from models.chaosCharacter import ChaosCharacter
@@ -11,7 +11,7 @@ class InputData(BaseModel):
   input_string: str
 
 class OutputData(BaseModel):
-  result: ChaosCharacter
+  result: Dict[str, Union[Dict[str, int], List[Tuple[int, int, Optional[int]]]]]
 
 @app.put('/chaos-letter', response_model=OutputData)
 async def chaos_letter(data: InputData):
