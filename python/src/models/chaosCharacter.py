@@ -1,14 +1,14 @@
 
-from typing import List, Dict
+from typing import List, Dict, Tuple, Optional
+from pydantic import BaseModel
 from .boundingBox import BoundingBox
 from .point import Point
 
-class ChaosCharacter:
-  def __init__(self, bounding_box: BoundingBox, points: List[Point]):
-    self.bounding_box = bounding_box
-    self.points = points
+class ChaosCharacter(BaseModel):
+  bounding_box: BoundingBox
+  points: List[Point]
     
-  def to_dict(self) -> Dict[str, List[Dict[str, int]]]:
+  def to_dict(self) -> Dict[Dict[str, int], List[Tuple[int, int, Optional[int]]]]:
     return {
       'bounding_box': self.bounding_box.to_dict(),
       'points': [point.to_tuple() for point in self.points]

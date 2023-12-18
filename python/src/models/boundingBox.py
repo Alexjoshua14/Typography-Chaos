@@ -1,9 +1,9 @@
 from typing import Dict
+from pydantic import BaseModel
 
-class BoundingBox:
-  def __init__(self, width: int, height: int):
-    self.width = width
-    self.height = height
+class BoundingBox(BaseModel):
+  width: int
+  height: int
     
   def to_dict(self) -> Dict[str, int]:
     return {
