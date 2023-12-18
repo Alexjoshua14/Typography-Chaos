@@ -15,7 +15,7 @@ const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text }) => {
   console.log(chaosDictionary)
 
   return (
-    <ChaosString text={text} chaosDictionary={chaosDictionary} />
+    <ChaosString text={text} chaosDictionary={chaosDictionary.dict} />
   )
 }
 
