@@ -28,12 +28,12 @@ def text_to_point_coordinates(text):
     
   points = pixel_matrix_point_coordinates(pixel_matrix)
   
-  boundingBox: BoundingBox = BoundingBox(*image.size)
+  bounding_box: BoundingBox = BoundingBox(width=image.size[0], height=image.size[1])
   
-  chaosCharacter = ChaosCharacter(boundingBox, points)
+  chaos_character = ChaosCharacter(bounding_box=bounding_box, points=points)
   
-  #return points
-  return chaosCharacter
+  # return { bounding_box, points }
+  return chaos_character
 
 ## Takes in text string, font path, and output path
 ## Renders text to image and saves it to output path
@@ -102,7 +102,7 @@ def pixel_matrix_point_coordinates(pixel_matrix: list[list]) -> List[Point]:
     for point in row:
       if (point[0] + point[1] + point[2] == 0):
         # Add point to list of points
-        points.append(Point(x, y))
+        points.append(Point(x=x, y=y))
       x += 1  
     y += 1
         
