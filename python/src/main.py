@@ -1,8 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Dict
 
-from python.chaos.render_text import text_to_point_coordinates
+from chaos.render_text import text_to_point_coordinates
+from models.chaosCharacter import ChaosCharacter
 
 app = FastAPI()
 
@@ -10,16 +11,15 @@ class InputData(BaseModel):
   input_string: str
 
 class OutputData(BaseModel):
-  result: List[Tuple[int, int]]
+  result: ChaosCharacter
 
 @app.put('/chaos-letter', response_model=OutputData)
 async def chaos_letter(data: InputData):
   try:
-   input_string = data.input_string
+    input_string = data.input_string
+      
+    return process_input_string(input_string)
     
-   response_data = process_input_string(input_string)
-    
-   return response_data
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
   
@@ -27,6 +27,6 @@ async def chaos_letter(data: InputData):
 def process_input_string(input_string: str):
   # TODO: Sanitize string ?
   
-  points = text_to_point_coordinates(input_string)
+  chaos_character = text_to_point_coordinates(input_string)
   
-  return {'result': points}
+  return {'result': chaos_character.to_dict()}
