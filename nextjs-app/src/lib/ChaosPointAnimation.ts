@@ -17,11 +17,14 @@ const animateRandomToTruePosition = (initialPosition: Point, truePosition: Point
 
 }
 
-// Takes a point and a chaos value and returns a new point
-export const chaosPosition = (point: Point, chaos: number, frame: number, totalFrames: number, bounds: BoundingBox): Point => {
+export const randomPosition = (point: Point, bounds: BoundingBox): Point => {
   const randomX = getRandomNumber(0, bounds.width)
   const randomY = getRandomNumber(0, bounds.height)
-  const randomPosition: Point = [randomX, randomY, point[2]]
+  return [randomX, randomY, point[2]]
+}
 
-  return animateRandomToTruePosition(randomPosition, point, frame, totalFrames)
+// Takes a point and a chaos value and returns a new point
+export const chaosPosition = (intialPostion: Point, truePosition: Point, frame: number, totalFrames: number): Point => {
+  
+  return animateRandomToTruePosition(intialPostion, truePosition, frame, totalFrames)
 }
