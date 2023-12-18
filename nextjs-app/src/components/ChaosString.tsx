@@ -1,7 +1,7 @@
 'use client'
 
 import { getChaosCoordinates } from '@/lib/ChaosCoordinates'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, MutableRefObject, useEffect, useRef, useState } from 'react'
 import ChaosLetter from './ChaosLetter'
 import { Point } from '@/lib/validators/Point'
 import { ChaosCharacter } from '@/lib/validators/ChaosCharacter'
@@ -9,7 +9,11 @@ import { ChaosDictionary } from '@/lib/ChaosDictionary'
 
 interface ChaosStringProps {
   text: string
-  chaosDictionary: Map<String, ChaosCharacter | null>
+  width: number
+  height: number
+  animationFrames: Point[][]
+  frameCount: number
+  frameRate: number
 }
 
 /**
@@ -18,68 +22,47 @@ interface ChaosStringProps {
  * @param param0 
  * @returns 
  */
-const ChaosString: FC<ChaosStringProps> = ({ text, chaosDictionary }) => {
+const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate }) => {
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
+  const [currentFrame, setCurrentFrame] = useState(0)
+  const intervalID: MutableRefObject<NodeJS.Timeout | null> = useRef(null)
 
-  useEffect(() => {
-    // Get width and height of string
-    let w = 0
-    let h = 0
-    text.split('').forEach((letter, index) => {
-      w += chaosDictionary.get(letter)?.bounding_box.width ?? 0
-      h = Math.max(h, chaosDictionary.get(letter)?.bounding_box.height ?? 0)
-    })
-
-    setWidth(w)
-    setHeight(h)
-
-  }, [setWidth, setHeight, text, chaosDictionary])
-
+  // Plot points based on animation frame
+  // Runs if animationFrames or currentFrame changes
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
 
-    if (canvas && ctx) {
+    // Plot points from current animation frame onto canvas
+    if (canvas && ctx && animationFrames.length > 0) {
       console.log("Drawing points")
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.fillStyle = '#a864fd'
 
-      // Keeps track of where the next letter should be begin
-      let leftOffset = 0
-
-      // For each letter in the text
-      // Get the points and bounding box from the chaos dictionary
-      // Then plot the points on the canvas
-      text.split('').forEach((letter, index) => {
-        const { points, bounding_box } =
-          chaosDictionary.get(letter) ??
-          { points: null, bounding_box: { width: 0, height: 0 } }
-        console.log("Height: " + bounding_box.height)
-
-        if (points) {
-          // console.log("Drawing points for letter: " + letter)
-          points.forEach((point) => {
-            // Offset point by preceding letters' bounding box
-            const x = point[0] + leftOffset
-
-            // Plot point
-            ctx.beginPath()
-            ctx.arc(x, point[1], 1, 0, 2 * Math.PI)
-            ctx.fill()
-          })
-
-          // Move left offset by the width of the letter like a typewriter
-          leftOffset += bounding_box.width
-        }
+      animationFrames[currentFrame].forEach((point) => {
+        ctx.beginPath()
+        ctx.arc(point[0], point[1], 1, 0, 2 * Math.PI)
+        ctx.fill()
       })
     }
-  }, [text, chaosDictionary])
+  }, [animationFrames, currentFrame])
+
+  useEffect(() => {
+    intervalID.current = setInterval(() => {
+      setCurrentFrame(prev => (prev + 1) % frameCount)
+    }, 1000 / frameRate)
+
+    return () => {
+      if (intervalID.current) {
+        clearInterval(intervalID.current)
+      }
+    }
+  })
 
   return (
-    <div className="flex w-fit border-2 border-pink-800">
-      <canvas ref={canvasRef} width={width} height={height} className='border-2 border-pink-500' />
+    <div className="flex w-fit">
+      <canvas ref={canvasRef} width={width} height={height} />
     </div>
   )
 }
