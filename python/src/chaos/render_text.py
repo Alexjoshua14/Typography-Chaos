@@ -1,5 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import matplotlib.pyplot as plt
 import os
 
@@ -18,13 +18,15 @@ def get_font_file(font_name: str, weight: str) -> str:
 ## Takes in text string
 ## Renders text to image and returns a list of points representing the text
 ## NOTE: Coordinates are based on top-left
-def text_to_point_coordinates(text):
-  font_path = get_font_file("Montserrat", "Regular")
+def text_to_point_coordinates(text: str, font: Optional[str] = "Montserrat"):
+  if (font is None):
+    font = "Montserrat"
+  font_path = get_font_file(font, "Regular")
   image = render_text_to_image(text, font_path, "../../../renders/rendered_image.png")
   pixel_matrix = image_to_pixel_matrix(image)
   
   # Print the pixel matrix
-  print_pixel_matrix(pixel_matrix)
+  # print_pixel_matrix(pixel_matrix)
     
   points = pixel_matrix_point_coordinates(pixel_matrix)
   

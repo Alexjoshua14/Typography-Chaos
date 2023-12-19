@@ -9,6 +9,7 @@ app = FastAPI()
 
 class InputData(BaseModel):
   input_string: str
+  font: Optional[str] = None
 
 class OutputData(BaseModel):
   result: Dict[str, Union[Dict[str, int], List[Tuple[int, int, Optional[int]]]]]
@@ -17,16 +18,17 @@ class OutputData(BaseModel):
 async def chaos_letter(data: InputData):
   try:
     input_string = data.input_string
-      
-    return process_input_string(input_string)
+    font = data.font
+    
+    return process_input_string(input_string, font)
     
   except Exception as e:
     raise HTTPException(status_code=500, detail=str(e))
   
   
-def process_input_string(input_string: str):
+def process_input_string(input_string: str, font: Optional[str] = None):
   # TODO: Sanitize string ?
   
-  chaos_character = text_to_point_coordinates(input_string)
+  chaos_character = text_to_point_coordinates(input_string, font)
   
   return {'result': chaos_character.to_dict()}
