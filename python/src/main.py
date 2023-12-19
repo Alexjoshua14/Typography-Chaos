@@ -4,7 +4,7 @@ from typing import List, Tuple, Optional, Dict, Union
 
 from chaos.render_text import text_to_point_coordinates
 from models.chaosCharacter import ChaosCharacter
-from utils.fontFile import available_fonts
+from utils.font_file import available_fonts
 
 app = FastAPI()
 

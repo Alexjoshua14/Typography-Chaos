@@ -3,7 +3,7 @@
 from chaos.render_text import text_to_point_coordinates
 from chaos.render_text import get_font_file
 from main import process_input_string
-from utils.fontFile import available_fonts
+from utils.font_file import available_fonts
 
 import json
 
