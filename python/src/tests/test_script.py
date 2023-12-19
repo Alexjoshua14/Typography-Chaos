@@ -6,11 +6,34 @@ from main import process_input_string
 
 import json
 
-result = text_to_point_coordinates("A")
-print(result.to_dict())
+try:
+  result = text_to_point_coordinates("A")
+  if (result is not None):
+    print("Test A passed")
+except:
+  print("Test A failed")
 
-processed_str = process_input_string("B")
-print(processed_str)
+try:
+  processed_str = process_input_string("B")
+  if (processed_str['result'] is not None):
+    print("Test B passed")
+except:
+  print("Test B failed")
+
+try:
+  processed_str_c = process_input_string("C", "Fake_Font")
+  if (processed_str_c['result'] is not None):
+    print("Test C might have failed..")
+except:
+  print("Test C passed")
+  
+try:
+  processed_str_d = process_input_string("D", "Montserrat")
+  # For no just ensure that the result is not None
+  if (processed_str_d['result'] is not None):
+    print("Test D passed")
+except:
+  print("Test D failed")
 
 # JSONify the result and print it in pretty format
 # Convert result.to_dict() to a JSON string
