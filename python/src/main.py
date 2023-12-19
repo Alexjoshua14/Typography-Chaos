@@ -34,7 +34,7 @@ async def chaos_letter(data: InputData):
   
 def process_input_string(input_string: str, font: Optional[str] = None, font_size: Optional[int] = 96):
   # TODO: Sanitize string ?
-  
+
   chaos_character = text_to_point_coordinates(input_string, font, font_size)
   
   return {'result': chaos_character.to_dict()}

@@ -16,6 +16,12 @@ from chaos.image_process import image_to_pixel_matrix, pixel_matrix_point_coordi
 ## Renders text to image and returns a list of points representing the text
 ## NOTE: Coordinates are based on top-left
 def text_to_point_coordinates(text: str, font: Optional[str] = "Montserrat", font_size: Optional[int] = 96) -> ChaosCharacter:
+  if font is None:
+    font = "Montserrat"
+  
+  if font_size is None:
+    font_size = 96  
+  
   output_path = "../../../renders/rendered_image.png"
   
   # Get font file
