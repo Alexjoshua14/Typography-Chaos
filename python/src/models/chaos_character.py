@@ -1,7 +1,7 @@
 
 from typing import List, Dict, Tuple, Optional
 from pydantic import BaseModel
-from .boundingBox import BoundingBox
+from .bounding_box import BoundingBox
 from .point import Point
 
 class ChaosCharacter(BaseModel):

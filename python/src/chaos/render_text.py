@@ -4,9 +4,9 @@ from typing import List, Tuple, Optional
 import matplotlib.pyplot as plt
 import os
 
-from models.chaosCharacter import ChaosCharacter
+from models.chaos_character import ChaosCharacter
 from models.point import Point
-from models.boundingBox import BoundingBox
+from models.bounding_box import BoundingBox
 
 from utils.font_file import get_font_file
 from chaos.image_render import render_text_to_image
