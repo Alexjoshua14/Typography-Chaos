@@ -6,3 +6,7 @@ import { ChaosCharacterSchema } from './ChaosCharacter'
 export const ChaosServerResponse = z.object({
   result: ChaosCharacterSchema
 })
+
+export const ChaosServerAvailableFontsResponse = z.object({
+  result: z.array(z.string())
+})
