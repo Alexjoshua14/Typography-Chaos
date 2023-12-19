@@ -9,20 +9,30 @@ from models.boundingBox import BoundingBox
 
 ## Takes in font name and weight
 ## Returns path to font file
-def get_font_file(font_name: str, weight: str) -> str:
+## TODO: Better handle getting file names
+def get_font_file(font_name: str, weight: str = 'Regular') -> str:
+  # Font name in file is pascal case
+  file_name = font_name.replace("_", "") + "-" + weight + ".ttf"
+  
   current_dir = os.path.dirname(os.path.realpath(__file__))
   font_dir = os.path.join(current_dir, "../../../fonts")
-  font_file = os.path.join(font_dir, font_name, "static", font_name + "-" + weight + ".ttf")
+  font_file = os.path.join(font_dir, font_name, file_name)
+  
+  # Check if font file exists
+  if (not os.path.isfile(font_file)):
+    raise Exception("Font file does not exist")
+  
   return font_file
 
 ## Takes in text string
 ## Renders text to image and returns a list of points representing the text
 ## NOTE: Coordinates are based on top-left
-def text_to_point_coordinates(text: str, font: Optional[str] = "Montserrat"):
+def text_to_point_coordinates(text: str, font: Optional[str] = "Montserrat", font_size: Optional[int] = 96) -> ChaosCharacter:
+  output_path = "../../../renders/rendered_image.png"
   if (font is None):
     font = "Montserrat"
   font_path = get_font_file(font, "Regular")
-  image = render_text_to_image(text, font_path, "../../../renders/rendered_image.png")
+  image = render_text_to_image(text, font_path, font_size, output_path)
   pixel_matrix = image_to_pixel_matrix(image)
   
   # Print the pixel matrix
@@ -39,10 +49,9 @@ def text_to_point_coordinates(text: str, font: Optional[str] = "Montserrat"):
 
 ## Takes in text string, font path, and output path
 ## Renders text to image and saves it to output path
-def render_text_to_image(text, font_path, output_path) -> Image.Image:
+def render_text_to_image(text, font_path, font_size, output_path) -> Image.Image:
   # Begin instantiating font by loading ttf file and determining
   # the size of the bounding box around our desired text string
-  font_size = 96
   font = ImageFont.truetype(font_path, font_size)
   _, _, text_width, text_height = font.getbbox(text)
   
