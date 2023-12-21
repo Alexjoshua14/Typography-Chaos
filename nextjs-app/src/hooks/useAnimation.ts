@@ -1,7 +1,9 @@
 
-import { FC, useEffect, useRef, useState } from 'react'
+import { Context, FC, useEffect, useRef, useState } from 'react'
 import { AnimationType } from '@/lib/validators/AnimationType'
 import { Point } from '@/lib/validators/Point'
+import { clear } from 'console'
+import { delayRepeat } from '@/lib/AnimationUtils'
 
 interface AnimationProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>
@@ -9,6 +11,7 @@ interface AnimationProps {
   frameCount: number
   frameRate: number
   animationType?: AnimationType
+  repeatDelay?: number
 }
 
 /**
@@ -21,7 +24,7 @@ interface AnimationProps {
  * @param animationType - Type of animation
  * @returns 
  */
-export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate, animationType = AnimationType.Loop }: AnimationProps) => {
+export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate, animationType = AnimationType.Loop, repeatDelay = 2000 }: AnimationProps) => {
   const [currentFrame, setCurrentFrame] = useState(0)
   const [direction, setDirection] = useState(1)
   const intervalID = useRef<NodeJS.Timeout>()
@@ -45,31 +48,51 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
     }
   }, [animationFrames, currentFrame, canvasRef])
 
-  // Handle ending events for animation types
+  /**
+   * Handle animation ending events. 
+   * 
+   * If animation is of a repeating type,
+   * animation will be repeated after a delay, animationDelay.  
+   * 
+   * 
+   * Cases:
+   *  - Once: Stop animation when last frame is reached
+   *  - Reverse: Reverse direction when first or last frame is reached
+   *  - Loop: Repeat animation when last frame is reached
+   * 
+   */
   useEffect(() => {
     const handleEndingEvents = () => {
-      if (animationType === AnimationType.Once && currentFrame === frameCount - 1) {
-        clearInterval(intervalID.current)
-      } else if (animationType === AnimationType.Reverse) {
-        if (currentFrame === 1 && direction === -1) {
-            // console.log("Reverse direction " + currentFrame)
-            setDirection(1)
-          } else if (currentFrame === frameCount - 2 && direction === 1) {
-            // console.log("Reverse direction " + currentFrame)
-            setDirection(-1)
-          }
+      if (currentFrame === frameCount - 1) {
+        if (animationType === AnimationType.Once) {
+          clearInterval(intervalID.current)
+        } else if (direction === 1 && animationType === AnimationType.Reverse) {
+          clearInterval(intervalID.current)
+          intervalID.current = undefined
+          delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
+        } else if (animationType === AnimationType.Loop) {
+          clearInterval(intervalID.current)
+          intervalID.current = undefined
+          delayRepeat(() => setCurrentFrame(0), repeatDelay)
+        }
+      } else if (currentFrame === 0) {
+        if (animationType === AnimationType.Reverse && direction === -1) {
+          clearInterval(intervalID.current)
+          intervalID.current = undefined
+          delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
+        }
       }
     }
 
     handleEndingEvents()
     
-  }, [animationType, currentFrame, frameCount, direction])
+  }, [animationType, currentFrame, frameCount, direction, repeatDelay])
 
   // Handle animation frame changes
   useEffect(() => {
     const handleAnimationFrameChange = () => {
       if (animationType === AnimationType.Loop) {
-        setCurrentFrame(prev => (prev + 1) % frameCount)
+        setCurrentFrame(prev => prev + 1)
       } else if (animationType === AnimationType.Reverse) {
         setCurrentFrame(prev => (prev + direction))
       } else {
@@ -84,6 +107,25 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
     }
 
   }, [animationType, frameCount, frameRate, direction])
+
+  const stop = () => {
+    clearInterval(intervalID.current)
+    intervalID.current = undefined
+  }
+
+  const start = () => {
+    if (intervalID.current === undefined) {
+      intervalID.current = setInterval(() => {
+        if (animationType === AnimationType.Loop) {
+          setCurrentFrame(prev => prev + 1)
+        } else if (animationType === AnimationType.Reverse) {
+          setCurrentFrame(prev => (prev + direction))
+        } else {
+          setCurrentFrame(prev => (prev + 1))
+        }
+      }, 1000 / frameRate)
+    }
+  }
 
   return { }
 }
