@@ -2,8 +2,8 @@ import { getAlphabetCoordinates, getChaosCoordinates } from "./pythonAPI"
 import { ChaosCharacter } from "./validators/ChaosCharacter"
 
 export class ChaosDictionary {
-  dict = new Map<String, ChaosCharacter>()
-  font = "Montserrat"
+  private dict = new Map<String, ChaosCharacter>()
+  private font: String = "Space_Mono"
 
   /** TODO: Determine if promises are simultaneous or sequential */
   async fetchLetters(text: String): Promise<Map<String, ChaosCharacter | null>> {
@@ -14,7 +14,7 @@ export class ChaosDictionary {
       if (!this.dict.has(letter)) {
         // console.log(`Getting letter: ${letter}`)
         try {
-          const chaosCharacter = await getChaosCoordinates(letter)
+          const chaosCharacter = await getChaosCoordinates(letter, this.font)
           // console.log("Here: " + JSON.stringify(chaosCharacter))
           if (chaosCharacter === null) {
             console.error("Chaos character is null")
@@ -54,5 +54,13 @@ export class ChaosDictionary {
 
   toString(): String {
     return JSON.stringify(this.dict)
+  }
+
+  setFont(font: String) {
+    // If changing fonts, all letters must be fetched again
+    if (font !== this.font) {
+      this.font = font
+      this.clear()
+    }
   }
 }
