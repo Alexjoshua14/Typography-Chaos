@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, use, useEffect, useRef, useState } from 'react'
 
 import ChaosString from './ChaosString'
 import { ChaosDictionary } from '@/lib/ChaosDictionary'
@@ -30,22 +30,32 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, duration = DEF
   const [height, setHeight] = useState(0)
   const [animationFrames, setAnimationFrames] = useState<Point[][]>([])
 
-  // Fetch any new letters and then update the message
+  /**
+   * Fetch any new letters and then update the message
+   */
   useEffect(() => {
-    setFrameCount(duration * frameRate)
     const getLetters = async () => {
       await chaosDictionary.current.fetchLetters(text)
       setMessage(text)
     }
-
-    // if (font && font !== currentFont) {
-
-    // }
     getLetters()
-  }, [text, duration, frameRate])
+  }, [text])
+
+  /**
+   * Update frame count when duration or frame rate changes
+   */
+  useEffect(() => {
+    setFrameCount(duration * frameRate)
+  }, [duration, frameRate])
 
 
-  // Generate animation frames
+  /** TODO: Hotswap these pieces with modular counterparts
+   * Generate animation frames when any of the following change:
+   * - message
+   * - font
+   * - frame count
+   * - duration
+   */
   useEffect(() => {
     let initialAnimationFrame: Point[] = []
     let inbetweenFrames: Point[][] = []
