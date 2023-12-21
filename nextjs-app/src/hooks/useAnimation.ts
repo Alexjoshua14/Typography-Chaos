@@ -29,7 +29,9 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
   const [direction, setDirection] = useState(1)
   const intervalID = useRef<NodeJS.Timeout>()
 
-  // Draw points onto canvas
+  /**
+   * Draw points from current animation frame onto canvas
+   */
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
@@ -88,7 +90,13 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
     
   }, [animationType, currentFrame, frameCount, direction, repeatDelay])
 
-  // Handle animation frame changes
+  /**
+   * Change animation frame based on animation type
+   * 
+   * Cases:
+   * - Once & Loop: Increment frame by 1
+   * - Reverse: Increment frame by current direction
+   */
   useEffect(() => {
     const handleAnimationFrameChange = () => {
       if (animationType === AnimationType.Loop) {
@@ -108,11 +116,17 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
 
   }, [animationType, frameCount, frameRate, direction])
 
+  /**
+   * Stop animation
+   */
   const stop = () => {
     clearInterval(intervalID.current)
     intervalID.current = undefined
   }
 
+  /**
+   * Start animation
+   */
   const start = () => {
     if (intervalID.current === undefined) {
       intervalID.current = setInterval(() => {

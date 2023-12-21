@@ -7,7 +7,6 @@ export class ChaosDictionary {
 
   /** TODO: Determine if promises are simultaneous or sequential */
   async fetchLetters(text: String): Promise<Map<String, ChaosCharacter | null>> {
-    console.log("FETCHING NEW LETTERS!" + text)
     // let letters = new Map<String, ChaosCharacter | null>()
 
     for (const letter of text.split('')) {
