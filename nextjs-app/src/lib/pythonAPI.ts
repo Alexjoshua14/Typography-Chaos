@@ -15,15 +15,19 @@ export async function getAvailableFonts() {
   return parsed.result
 }
 
-export async function getChaosCoordinates(text: string) {
+export async function getChaosCoordinates(text: String, font?: String) {
+  let payload: {input_string: String, font?: String} = { input_string: text }
+  if (font) {
+    payload["font"] = font
+  }
+
   try {
-    console.log("Getting chaos coordinates for: " + text)
     const res = await fetch(CHAOS_LETTERS_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ input_string: text }),
+      body: JSON.stringify(payload),
       cache: 'no-cache',
     })
 
