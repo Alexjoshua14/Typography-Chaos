@@ -47,17 +47,30 @@ const wordWidth = (chaosDictionary: ChaosDictionary, word: String) => {
   return width
 }
 
-export const getTrueAnimationFrameWithWrap = (chaosDictionary: ChaosDictionary, message: String, w: number) => {
+/**
+ * Generates a frame of points for the given message
+ * where each point is exactly where it should be
+ * This version wraps the text to the given width
+ * 
+ * @param chaosDictionary - The dictionary of chaos characters
+ * @param message - The message to be displayed
+ * @param w - The width of the canvas
+ * @param leading - The height of a line of text as a multiple of the font size
+ * @returns 
+ */
+export const getTrueAnimationFrameWithWrap = (chaosDictionary: ChaosDictionary, message: String, w: number, leading?: number) => {
   let trueFrame: Point[] = []
   
   let leftOffset = 0
   let topOffset = 0
+  let lineHeight = (leading ?? 1.2) * 94 // TODO: Make this dynamic
+  let spaceWidth = chaosDictionary.get(' ')?.bounding_box.width ?? 10
 
   message.split(' ').forEach((word, index) => {
     const width = wordWidth(chaosDictionary, word)
     if (leftOffset + width > w) {
       leftOffset = 0
-      topOffset += 94 // TODO: Make this dynamic
+      topOffset += lineHeight
     }
 
     word.split('').forEach((letter) => {
@@ -70,10 +83,10 @@ export const getTrueAnimationFrameWithWrap = (chaosDictionary: ChaosDictionary, 
       leftOffset += l.bounding_box.width
     })
 
-    leftOffset += chaosDictionary.get(' ')?.bounding_box.width ?? 10 // TODO: Move this to a more constant location
+    leftOffset += spaceWidth
   })
 
-  return {trueFrame, width: leftOffset, height: topOffset + 94} // TODO: Adjust this when topOffset value is corrected
+  return {trueFrame, width: leftOffset, height: topOffset + lineHeight}
 }
 
 
@@ -101,6 +114,14 @@ export const getInitialAnimationFrame = (w: number, h: number, message: String, 
   return initialAnimationFrame
 }
 
+/**
+ * Interpolates between the initial and final frames
+ * 
+ * @param frameCount 
+ * @param initialFrame 
+ * @param finalFrame 
+ * @returns 
+ */
 export const fillInFrames = (frameCount: number, initialFrame: Point[], finalFrame: Point[], ) => {
   let inbetweenFrames: Point[][] = []
 
@@ -116,6 +137,16 @@ export const fillInFrames = (frameCount: number, initialFrame: Point[], finalFra
   return inbetweenFrames
 }
 
+/**
+ * Generates a list of frames for the given message
+ * 
+ * @param w 
+ * @param h 
+ * @param message 
+ * @param chaosDictionary 
+ * @param frameCount 
+ * @returns 
+ */
 export const generateFrames = (w: number, h: number, message: String, chaosDictionary: ChaosDictionary, frameCount: number) => {
   const trueAnimationFrame = getTrueAnimationFrame(chaosDictionary, message)
   const initialAnimationFrame = getInitialAnimationFrame(w, h, message, trueAnimationFrame, chaosDictionary)
