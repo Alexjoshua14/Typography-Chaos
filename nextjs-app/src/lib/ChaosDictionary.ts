@@ -2,8 +2,8 @@ import { getAlphabetCoordinates, getChaosCoordinates } from "./pythonAPI"
 import { ChaosCharacter } from "./validators/ChaosCharacter"
 
 export class ChaosDictionary {
-  private dict = new Map<String, ChaosCharacter>()
-  private font: String = "Space_Mono"
+  protected dict = new Map<String, ChaosCharacter>()
+  protected font: String = "Space_Mono"
 
   /** TODO: Determine if promises are simultaneous or sequential */
   async fetchLetters(text: String): Promise<Map<String, ChaosCharacter | null>> {
