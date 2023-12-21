@@ -12,6 +12,8 @@ const DEFAULT_DURATION = 8
 
 interface ChaosWrapperProps {
   text: string
+  font?: string
+  size?: number
   duration?: number
   frameRate?: number
 }
@@ -20,7 +22,7 @@ interface ChaosWrapperProps {
  * TODO: I think dict is now being handled on client,
  * might want to move it back to server 
  */
-export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE }) => {
+export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE }) => {
   const [frameCount, setFrameCount] = useState(duration * frameRate)
   const chaosDictionary = useRef(new ChaosDictionary())
   const [message, setMessage] = useState('')
@@ -36,6 +38,9 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, duration = DEFAULT_D
       setMessage(text)
     }
 
+    // if (font && font !== currentFont) {
+
+    // }
     getLetters()
   }, [text, duration, frameRate])
 
