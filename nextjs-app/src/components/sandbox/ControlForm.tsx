@@ -18,6 +18,7 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { getAvailableFonts } from '@/lib/pythonAPI'
+import { AnimationType } from '@/lib/validators/AnimationType'
 
 interface ControlForm {
   updateFields: (fields: z.infer<typeof formSchema>) => void
@@ -30,6 +31,7 @@ const formSchema = z.object({
   duration: z.number().positive(),
   frameRate: z.number().int().positive().default(24),
   font: z.string().default('Montserrat'),
+  animationType: z.nativeEnum(AnimationType).default(AnimationType.Reverse)
 })
 
 /**
@@ -43,6 +45,7 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
   const [text, setText] = useState('Hey..')
   const [duration, setDuration] = useState(8)
   const [fontOptions, setFontOptions] = useState<string[]>([])
+  const [animationType, setAnimationType] = useState<AnimationType>(AnimationType.Reverse)
 
   useEffect(() => {
     const getFonts = async () => {
@@ -57,16 +60,18 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: formSchema.parse({
-      text: 'Hello World!',
+      text: 'Debug..',
       duration: 8,
       frameRate: 24,
       font: 'Montserrat',
+      animationType: AnimationType.Reverse
     })
   })
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setText(values.text)
     setDuration(values.duration)
+    setAnimationType(values.animationType)
     updateFields(values)
   }
 
@@ -99,7 +104,7 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
                 Font
               </FormLabel>
               <FormControl>
-                <Select>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a font" />
                   </SelectTrigger>
@@ -112,6 +117,32 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
               </FormControl>
               <FormDescription>
                 The font to use
+              </FormDescription>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="animationType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Animation Type
+              </FormLabel>
+              <FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select an animation type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(AnimationType).map((type) => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormDescription>
+                The type of animation to use
               </FormDescription>
             </FormItem>
           )}
