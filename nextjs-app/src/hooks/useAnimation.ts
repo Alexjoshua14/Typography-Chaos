@@ -68,15 +68,16 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
   useEffect(() => {
     const handleEndingEvents = () => {
       if (currentFrame === frameCount - 1) {
-        if (animationType === AnimationType.Once) {
-          clearInterval(intervalID.current)
-        } else if (direction === 1 && animationType === AnimationType.Reverse) {
-          clearInterval(intervalID.current)
+        // Stop interval
+        clearInterval(intervalID.current)
           intervalID.current = undefined
+
+        if (animationType === AnimationType.Once) {
+          setIsPlaying(false)
+          setCurrentFrame(frameCount - 1)
+        } else if (direction === 1 && animationType === AnimationType.Reverse) {
           delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
         } else if (animationType === AnimationType.Loop) {
-          clearInterval(intervalID.current)
-          intervalID.current = undefined
           delayRepeat(() => setCurrentFrame(0), repeatDelay)
         }
       } else if (currentFrame === 0) {
@@ -101,6 +102,7 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
    * - Reverse: Increment frame by current direction
    */
   useEffect(() => {
+    console.log("Animation type: ", animationType)
     const handleAnimationFrameChange = () => {
       if (animationType === AnimationType.Loop) {
         setCurrentFrame(prev => prev + 1)
