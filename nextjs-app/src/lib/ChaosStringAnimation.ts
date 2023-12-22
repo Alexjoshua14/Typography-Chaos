@@ -3,6 +3,78 @@
 import { Point } from '@/lib/validators/Point'
 import { ChaosDictionary } from './ChaosDictionary'
 import { chaosPosition, randomPosition } from './ChaosPointAnimation'
+import { BoundingBox } from './validators/BoundingBox'
+
+/**
+ * Returns the width of the given word
+ * 
+ * @param chaosDictionary 
+ * @param word 
+ * @returns 
+ */
+export const wordWidth = (chaosDictionary: ChaosDictionary, word: String) => {
+  let width = 0
+
+  word.split('').forEach((letter) => {
+    const l = chaosDictionary.get(letter) ?? { bounding_box: { width: 0, height: 0 }, points: [] }
+    width += l.bounding_box.width
+  })
+  
+  return width
+}
+
+/**
+ * Generates the bounds of the given message
+ * assuming the message is a single line
+ * @param chaosDictionary 
+ * @param message 
+ * @returns 
+ */
+export const getBounds = (chaosDictionary: ChaosDictionary, message: String) => {
+  let w = 0
+  let h = 0
+
+  message.split('').forEach((letter, index) => {
+    w += chaosDictionary.get(letter)?.bounding_box.width ?? 0
+    h = Math.max(h, chaosDictionary.get(letter)?.bounding_box.height ?? 0)
+  })
+
+  return { w, h }
+}
+
+/**
+ * Generates the bounds of the given message
+ * breaking the message into multiple lines
+ * based on the given width
+ * 
+ * @param chaosDictionary - The dictionary of chaos characters
+ * @param message - The message to be displayed
+ * @param w - The width of the canvas
+ * @param leading - The height of a line of text as a multiple of the font size
+ * @returns 
+ */
+export const getBoundsWithWrap = (chaosDictionary: ChaosDictionary, message: String, w: number, leading?: number) => {
+  let leftOffset = 0
+  let topOffset = 0
+  let lineHeight = (leading ?? 1.2) * 94 // TODO: Make this dynamic
+  let spaceWidth = chaosDictionary.get(' ')?.bounding_box.width ?? 10
+
+  message.split(' ').forEach((word, index) => {
+    const width = wordWidth(chaosDictionary, word)
+    if (leftOffset + width > w) {
+      leftOffset = 0
+      topOffset += lineHeight
+    }
+
+    leftOffset += width
+    leftOffset += spaceWidth
+  })
+
+  // Add line height for the last line to account for the last line
+  let boundingBox: BoundingBox = { width: leftOffset, height: topOffset + lineHeight }
+
+  return boundingBox
+}
 
 /**
  * Generates a frame of points for the given message
@@ -27,24 +99,6 @@ export const getTrueAnimationFrame = (chaosDictionary: ChaosDictionary, message:
   })
 
   return trueFrame
-}
-
-/**
- * Returns the width of the given word
- * 
- * @param chaosDictionary 
- * @param word 
- * @returns 
- */
-const wordWidth = (chaosDictionary: ChaosDictionary, word: String) => {
-  let width = 0
-
-  word.split('').forEach((letter) => {
-    const l = chaosDictionary.get(letter) ?? { bounding_box: { width: 0, height: 0 }, points: [] }
-    width += l.bounding_box.width
-  })
-  
-  return width
 }
 
 /**
