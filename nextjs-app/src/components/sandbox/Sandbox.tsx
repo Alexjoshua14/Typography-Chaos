@@ -18,6 +18,7 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { getAvailableFonts } from '@/lib/pythonAPI'
+import { ControlForm } from './ControlForm'
 
 interface SandboxProps {
 
@@ -44,128 +45,14 @@ export const Sandbox: FC<SandboxProps> = ({ }) => {
   const [duration, setDuration] = useState(8)
   const [fontOptions, setFontOptions] = useState<string[]>([])
 
-  useEffect(() => {
-    const getFonts = async () => {
-      const options = await getAvailableFonts()
-      setFontOptions(options)
-      console.log(options)
-    }
-
-    getFonts()
-  }, [])
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: formSchema.parse({
-      text: 'Hello World!',
-      duration: 8,
-      frameRate: 24,
-      font: 'Montserrat',
-    })
-  })
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    setText(values.text)
-    setDuration(values.duration)
+  const updateFields = (fields: z.infer<typeof formSchema>) => {
+    setText(fields.text)
+    setDuration(fields.duration)
   }
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="text"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Text
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder='Hello' {...field} />
-                </FormControl>
-                <FormDescription>
-                  The text to animate
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="font"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Font
-                </FormLabel>
-                <FormControl>
-                  <Select>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select a font" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {fontOptions.map((font) => (
-                        <SelectItem key={font} value={font}>{font}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormDescription>
-                  The font to use
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          {/* <FormField
-            control={form.control}
-            name="duration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Duration
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    inputMode='decimal'
-                    min={0}
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  The duration of the animation in seconds
-                  {form.formState.errors.duration?.message}
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="frameRate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Frame Rate
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    inputMode='decimal'
-                    min={0}
-                    step={1}
-                    placeholder='24'
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  The frame rate of the animation in frames per second
-                </FormDescription>
-              </FormItem>
-            )}
-          /> */}
-          <Button type="submit">Animate</Button>
-        </form>
-      </Form>
+      <ControlForm updateFields={updateFields} />
       <ChaosWrapper text={text} duration={duration} />
     </div>
   )
