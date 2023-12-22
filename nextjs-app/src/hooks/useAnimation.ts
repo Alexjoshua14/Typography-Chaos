@@ -29,6 +29,8 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
   const [direction, setDirection] = useState(1)
   const intervalID = useRef<NodeJS.Timeout>()
 
+  const [isPlaying, setIsPlaying] = useState(true)
+
   /**
    * Draw points from current animation frame onto canvas
    */
@@ -86,9 +88,10 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
       }
     }
 
-    handleEndingEvents()
+    if (isPlaying)
+      handleEndingEvents()
     
-  }, [animationType, currentFrame, frameCount, direction, repeatDelay])
+  }, [animationType, currentFrame, frameCount, direction, repeatDelay, isPlaying])
 
   /**
    * Change animation frame based on animation type
@@ -108,18 +111,20 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
       }
     }
 
-    intervalID.current = setInterval(handleAnimationFrameChange, 1000 / frameRate)
+    if (isPlaying)
+      intervalID.current = setInterval(handleAnimationFrameChange, 1000 / frameRate)
 
     return () => {
       clearInterval(intervalID.current)
     }
 
-  }, [animationType, frameCount, frameRate, direction])
+  }, [animationType, frameCount, frameRate, direction, isPlaying])
 
   /**
    * Stop animation
    */
   const stop = () => {
+    setIsPlaying(false)
     clearInterval(intervalID.current)
     intervalID.current = undefined
   }
@@ -128,6 +133,7 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
    * Start animation
    */
   const start = () => {
+    setIsPlaying(true)
     if (intervalID.current === undefined) {
       intervalID.current = setInterval(() => {
         if (animationType === AnimationType.Loop) {
@@ -141,5 +147,17 @@ export const useAnimation  = ({canvasRef, animationFrames, frameCount, frameRate
     }
   }
 
-  return { }
+  const seek = (frame: number) => {
+    setCurrentFrame(frame)
+  }
+
+  const nextFrame = () => {
+    setCurrentFrame(prev => prev + 1)
+  }
+
+  const prevFrame = () => {
+    setCurrentFrame(prev => prev - 1)
+  }
+
+  return { currentFrame, start, stop, seek, nextFrame, prevFrame }
 }
