@@ -4,12 +4,14 @@ import { ChaosDictionary } from '@/lib/ChaosDictionary'
 import { getBounds, generateFrames } from '@/lib/ChaosStringAnimation'
 import { Point } from '@/lib/validators/Point'
 import DebugChaosString from './debugChaosString'
+import { AnimationType } from '@/lib/validators/AnimationType'
 
 interface DebugChaosWrapperProps {
   text: string
   duration?: number
   frameRate?: number
   font?: string
+  animationType?: AnimationType
 }
 
 /**
@@ -18,7 +20,7 @@ interface DebugChaosWrapperProps {
  * @param param0 
  * @returns 
  */
-const DebugChaosWrapper: FC<DebugChaosWrapperProps> = ({ text, duration = 1, frameRate = 1, font }) => {
+const DebugChaosWrapper: FC<DebugChaosWrapperProps> = ({ text, duration = 1, frameRate = 1, font, animationType }) => {
   const [frameCount, setFrameCount] = useState(duration * frameRate)
   const chaosDictionary = useRef(new ChaosDictionary())
   const [message, setMessage] = useState('')
@@ -64,7 +66,7 @@ const DebugChaosWrapper: FC<DebugChaosWrapperProps> = ({ text, duration = 1, fra
 
 
   return (
-    <DebugChaosString text={text} width={width} height={height} animationFrames={animationFrames} frameCount={frameCount} frameRate={frameRate} />
+    <DebugChaosString text={text} width={width} height={height} animationFrames={animationFrames} frameCount={frameCount} frameRate={frameRate} animationType={animationType} />
   )
 }
 

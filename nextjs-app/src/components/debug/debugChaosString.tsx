@@ -12,6 +12,7 @@ interface DebugChaosStringProps {
   animationFrames: Point[][]
   frameCount: number
   frameRate: number
+  animationType?: AnimationType
 }
 
 /**
@@ -20,9 +21,7 @@ interface DebugChaosStringProps {
  * @param param0 
  * @returns 
  */
-const DebugChaosString: FC<DebugChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate }) => {
-  let animationType: AnimationType = AnimationType.Reverse
-
+const DebugChaosString: FC<DebugChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate, animationType = AnimationType.Reverse }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { currentFrame, start, stop, seek, nextFrame, prevFrame } = useAnimation({ canvasRef, animationFrames, frameCount, frameRate, animationType })
 

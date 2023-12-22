@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { DebugPanel } from '@/components/debug/debug'
+import { DebugPanel } from '@/components/debug/debugPanel'
 
 interface DebugProps {
 
