@@ -6,6 +6,7 @@ import ChaosString from './ChaosString'
 import { ChaosDictionary } from '@/lib/ChaosDictionary'
 import { Point } from '@/lib/validators/Point'
 import { chaosPosition, randomPosition } from '@/lib/ChaosPointAnimation'
+import { generateFrames, getBounds } from '@/lib/ChaosStringAnimation'
 
 const DEFAULT_FRAME_RATE = 24
 const DEFAULT_DURATION = 8
@@ -49,73 +50,20 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, duration = DEF
   }, [duration, frameRate])
 
 
-  /** TODO: Hotswap these pieces with modular counterparts
+  /** 
    * Generate animation frames when any of the following change:
    * - message
    * - font
    * - frame count
-   * - duration
    */
   useEffect(() => {
-    let initialAnimationFrame: Point[] = []
-    let inbetweenFrames: Point[][] = []
-    let finalAnimationFrame: Point[] = []
+    console.log("Generating frames")
+    let bounds = getBounds(chaosDictionary.current, message)
+    setWidth(bounds.w)
+    setHeight(bounds.h)
 
-    const getBounds = () => {
-      let w = 0
-      let h = 0
-
-      message.split('').forEach((letter, index) => {
-        w += chaosDictionary.current.get(letter)?.bounding_box.width ?? 0
-        h = Math.max(h, chaosDictionary.current.get(letter)?.bounding_box.height ?? 0)
-      })
-
-      setWidth(w)
-      setHeight(h)
-      return { w, h }
-    }
-
-    const getFinalAnimationFrame = () => {
-      let leftOffset = 0
-
-      message.split('').forEach((letter, index) => {
-        const l = chaosDictionary.current.get(letter) ?? { bounding_box: { width: 0, height: 0 }, points: [] }
-        l.points.forEach((point) => {
-          const x = point[0] + leftOffset
-          finalAnimationFrame.push([x, point[1], point[2]])
-        })
-        leftOffset += l.bounding_box.width
-      })
-    }
-
-    const getInitialAnimationFrame = (w: number, h: number) => {
-      for (let i = 0; i < finalAnimationFrame.length; i++) {
-        initialAnimationFrame.push(randomPosition(finalAnimationFrame[i], { width: w, height: h }))
-      }
-
-      message.split('').forEach((letter, index) => {
-        const points = chaosDictionary.current.get(letter)?.points ?? []
-        points.forEach((point) => {
-          initialAnimationFrame.push(point)
-        })
-      })
-    }
-
-    const fillInFrames = () => {
-      for (let i = 1; i < frameCount; i++) {
-        const animationFrame: Point[] = []
-        for (let j = 0; j < finalAnimationFrame.length; j++) {
-          animationFrame.push(chaosPosition(initialAnimationFrame[j], finalAnimationFrame[j], i, frameCount))
-        }
-        inbetweenFrames.push(animationFrame)
-      }
-    }
-
-    const { w, h } = getBounds()
-    getFinalAnimationFrame()
-    getInitialAnimationFrame(w, h)
-    fillInFrames()
-    setAnimationFrames([initialAnimationFrame, ...inbetweenFrames, finalAnimationFrame])
+    let frames = generateFrames(bounds.w, bounds.h, message, chaosDictionary.current, frameCount)
+    setAnimationFrames(frames)
   }, [message, frameCount])
 
   return (
