@@ -158,13 +158,6 @@ export const getInitialAnimationFrame = (w: number, h: number, message: String, 
     initialAnimationFrame.push(randomPosition(trueAnimationFrame[i], { width: w, height: h }))
   }
 
-  message.split('').forEach((letter, index) => {
-    const points = chaosDictionary.get(letter)?.points ?? []
-    points.forEach((point) => {
-      initialAnimationFrame.push(point)
-    })
-  })
-
   return initialAnimationFrame
 }
 

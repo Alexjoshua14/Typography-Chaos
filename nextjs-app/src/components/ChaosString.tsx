@@ -4,6 +4,7 @@ import { FC, useRef } from 'react'
 import { Point } from '@/lib/validators/Point'
 import { useAnimation } from '@/hooks/useAnimation'
 import { AnimationType } from '@/lib/validators/AnimationType'
+import Canvas from './Canvas'
 
 interface ChaosStringProps {
   text: string
@@ -24,11 +25,11 @@ const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrame
   let animationType: AnimationType = AnimationType.Reverse
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  useAnimation({ canvasRef, animationFrames, frameCount, frameRate, animationType })
+  const { currentFrame } = useAnimation({ canvasRef, animationFrames, frameCount, frameRate, animationType })
 
   return (
     <div className="relative flex w-fit">
-      <canvas ref={canvasRef} width={width} height={height} />
+      <Canvas animationFrames={animationFrames} currentFrame={currentFrame} width={width} height={height} />
       <div className="visually-hidden">
         {text}
       </div>
