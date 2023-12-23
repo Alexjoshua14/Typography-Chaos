@@ -5,6 +5,7 @@ import { Point } from '@/lib/validators/Point'
 import { useAnimation } from '@/hooks/useAnimation'
 import { AnimationType } from '@/lib/validators/AnimationType'
 import Canvas from '../Canvas'
+import { PlaybackControls } from './PlaybackControls'
 
 interface DebugChaosStringProps {
   text: string
@@ -23,7 +24,15 @@ interface DebugChaosStringProps {
  * @returns 
  */
 const DebugChaosString: FC<DebugChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate, animationType = AnimationType.Reverse }) => {
-  const { currentFrame, start, stop, togglePlayback, seek, nextFrame, prevFrame, isPlaying } = useAnimation({ frameCount, frameRate, animationType })
+  const {
+    currentFrame,
+    start,
+    stop,
+    togglePlayback,
+    seek,
+    nextFrame,
+    prevFrame
+  } = useAnimation({ frameCount, frameRate, animationType })
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -32,7 +41,7 @@ const DebugChaosString: FC<DebugChaosStringProps> = ({ text, width, height, anim
     switch (e.key) {
       case ' ':
         // pause
-        togglePlayback
+        togglePlayback()
         break
       case 'ArrowLeft':
         prevFrame()
@@ -81,25 +90,7 @@ const DebugChaosString: FC<DebugChaosStringProps> = ({ text, width, height, anim
       <div className="border-2 border-pink-400">
         <Canvas currentFrame={currentFrame} animationFrames={animationFrames} width={width} height={height} />
       </div>
-      <div aria-description='Animation Control Panel'>
-        <div className="flex gap-6 items-center justify-center h-14">
-          <button onClick={prevFrame}>
-            {`<`}
-          </button>
-          <div className="flex gap-2 items-center justify-center">
-            <button onClick={start}>
-              {`▶`}
-            </button>
-            <button onClick={stop}>
-              {`◼`}
-            </button>
-          </div>
-          <button onClick={nextFrame}>
-            {`>`}
-          </button>
-        </div>
-        <input type="range" value={currentFrame} min={0} max={frameCount} step={1} onChange={(e) => seek(parseInt(e.target.value))} />
-      </div>
+      <PlaybackControls prevFrame={prevFrame} nextFrame={nextFrame} start={start} stop={stop} seek={seek} currentFrame={currentFrame} frameCount={frameCount} />
       <div className="visually-hidden">
         {text}
       </div>

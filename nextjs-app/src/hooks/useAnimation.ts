@@ -32,6 +32,37 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
   const [isPlaying, setIsPlaying] = useState(true)
 
   /**
+   * For when animation reaches final frame
+   */
+  const handleEndEvent = useCallback(() => {
+    clearInterval(intervalID.current)
+          intervalID.current = undefined
+
+    if (animationType === AnimationType.Once) {
+      setIsPlaying(false)
+      setCurrentFrame(frameCount - 1)
+    } else if (direction === 1 && animationType === AnimationType.Reverse) {
+      delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
+    } else if (animationType === AnimationType.Loop) {
+      delayRepeat(() => setCurrentFrame(0), repeatDelay)
+    }
+  }, [animationType, direction, frameCount, repeatDelay])
+
+  /**
+   * For when animation returns to beginning
+   */
+  const handleBeginningEvent = useCallback(() => {
+    clearInterval(intervalID.current)
+          intervalID.current = undefined
+          
+    if (animationType === AnimationType.Reverse && direction === -1) {
+      clearInterval(intervalID.current)
+      intervalID.current = undefined
+      delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
+    }
+  }, [animationType, direction, repeatDelay])
+
+  /**
    * Handle animation ending events. 
    * 
    * If animation is of a repeating type,
@@ -47,31 +78,16 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
   useEffect(() => {
     const handleEndingEvents = () => {
       if (currentFrame === frameCount - 1) {
-        // Stop interval
-        clearInterval(intervalID.current)
-          intervalID.current = undefined
-
-        if (animationType === AnimationType.Once) {
-          setIsPlaying(false)
-          setCurrentFrame(frameCount - 1)
-        } else if (direction === 1 && animationType === AnimationType.Reverse) {
-          delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
-        } else if (animationType === AnimationType.Loop) {
-          delayRepeat(() => setCurrentFrame(0), repeatDelay)
-        }
+        handleEndEvent()
       } else if (currentFrame === 0) {
-        if (animationType === AnimationType.Reverse && direction === -1) {
-          clearInterval(intervalID.current)
-          intervalID.current = undefined
-          delayRepeat(() => setDirection(prev => prev * -1), repeatDelay)
-        }
+        handleBeginningEvent()
       }
     }
 
     if (isPlaying)
       handleEndingEvents()
     
-  }, [animationType, currentFrame, frameCount, direction, repeatDelay, isPlaying])
+  }, [isPlaying, currentFrame, frameCount, handleEndEvent, handleBeginningEvent])
 
   /**
    * Change animation frame based on animation type
@@ -99,6 +115,7 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
     }
 
   }, [animationType, frameRate, direction, isPlaying])
+
 
   /**
    * Stop animation
@@ -136,15 +153,13 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
   }, [])
 
   const nextFrame = useCallback(() => {
-    if (currentFrame < frameCount - 1)
-      setCurrentFrame(prev => prev + 1)
-  }, [currentFrame, frameCount])
+    setCurrentFrame(prev => Math.min(prev + 1, frameCount - 1))
+    
+  }, [frameCount])
 
   const prevFrame = useCallback(() => {
-    if (currentFrame > 0)
-      setCurrentFrame(prev => prev - 1)
-  }, [currentFrame])
-
+    setCurrentFrame(prev => Math.max(prev + 1, 0))
+  }, [])
 
   return { currentFrame, start, stop, togglePlayback, seek, nextFrame, prevFrame, isPlaying }
 }
