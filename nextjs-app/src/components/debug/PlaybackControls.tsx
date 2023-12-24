@@ -10,6 +10,12 @@ interface PlaybackControlsProps {
   frameCount: number
 }
 
+/**
+ * UI Controls for playing back an animation
+ * 
+ * @param param0
+ * @returns
+ */
 export const PlaybackControls: FC<PlaybackControlsProps> = ({ prevFrame, nextFrame, start, stop, seek, currentFrame, frameCount }) => {
   return (
     <div aria-description='Animation Control Panel'>
