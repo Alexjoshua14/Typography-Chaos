@@ -62,6 +62,14 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
     }
   }, [animationType, direction, repeatDelay])
 
+  const handleEndingEvents = useCallback(() => {
+    if (currentFrame === frameCount - 1) {
+      handleEndEvent()
+    } else if (currentFrame === 0) {
+      handleBeginningEvent()
+    }
+  }, [currentFrame, frameCount, handleEndEvent, handleBeginningEvent])
+
   /**
    * Handle animation ending events. 
    * 
@@ -76,18 +84,10 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
    * 
    */
   useEffect(() => {
-    const handleEndingEvents = () => {
-      if (currentFrame === frameCount - 1) {
-        handleEndEvent()
-      } else if (currentFrame === 0) {
-        handleBeginningEvent()
-      }
-    }
-
     if (isPlaying)
       handleEndingEvents()
     
-  }, [isPlaying, currentFrame, frameCount, handleEndEvent, handleBeginningEvent])
+  }, [isPlaying, currentFrame, handleEndingEvents])
 
   /**
    * Change animation frame based on animation type
@@ -131,6 +131,9 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
    */
   const start = useCallback(() => {
     setIsPlaying(true)
+    if (currentFrame === frameCount - 1 || currentFrame === 0) {
+      handleEndingEvents()
+    }
     if (intervalID.current === undefined) {
       intervalID.current = setInterval(() => {
         if (animationType === AnimationType.Loop) {
@@ -142,7 +145,7 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
         }
       }, 1000 / frameRate)
     }
-  }, [animationType, direction, frameRate])
+  }, [animationType, direction, frameRate, handleEndingEvents, currentFrame, frameCount ])
 
   const togglePlayback = useCallback(() => {
     setIsPlaying(prev => !prev)
@@ -158,7 +161,7 @@ export const useAnimation  = ({ frameCount, frameRate, animationType = Animation
   }, [frameCount])
 
   const prevFrame = useCallback(() => {
-    setCurrentFrame(prev => Math.max(prev + 1, 0))
+    setCurrentFrame(prev => Math.max(prev - 1, 0))
   }, [])
 
   return { currentFrame, start, stop, togglePlayback, seek, nextFrame, prevFrame, isPlaying }
