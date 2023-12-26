@@ -10,6 +10,7 @@ interface ChaosStringProps {
   text: string
   width: number
   height: number
+  animationType?: AnimationType
   animationFrames: Point[][]
   frameCount: number
   frameRate: number
@@ -21,15 +22,13 @@ interface ChaosStringProps {
  * @param param0 
  * @returns 
  */
-const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate }) => {
-  let animationType: AnimationType = AnimationType.Reverse
-
+const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate, animationType = AnimationType.Reverse }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { currentFrame } = useAnimation({ canvasRef, animationFrames, frameCount, frameRate, animationType })
 
   return (
     <div className="relative flex w-fit">
-      <Canvas animationFrames={animationFrames} currentFrame={currentFrame} width={width} height={height} />
+      <Canvas animationFrames={animationFrames} currentFrame={currentFrame} width={width} height={height} animationType={animationType} />
       <div className="visually-hidden">
         {text}
       </div>

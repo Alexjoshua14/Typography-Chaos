@@ -3,7 +3,7 @@ import { ChaosCharacter } from "./validators/ChaosCharacter"
 
 export class ChaosDictionary {
   protected dict = new Map<String, ChaosCharacter>()
-  protected font: String = "Space_Mono"
+  protected font: String = "Montserrat"
 
   /** TODO: Determine if promises are simultaneous or sequential 
    * Fetches the coordinates for each letter in the given text
@@ -41,8 +41,9 @@ export class ChaosDictionary {
   async fetchAlphabet() {
     // Fetch all letters of the alphabet lowercase and uppercase along with numbers and punctuation
     const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,?!- "
-    let letters = await getAlphabetCoordinates(alphabet)
-    
+    // let letters = await getAlphabetCoordinates(alphabet)
+    await this.fetchLetters(alphabet)
+
   }
 
   /**
@@ -87,11 +88,16 @@ export class ChaosDictionary {
    * @param font - The font to be set
    * @returns The font of the dictionary
    */
-  setFont(font: String) {
+  async setFont(font: String) {
+    console.log("Setting font to " + font)
     // If changing fonts, all letters must be fetched again
     if (font !== this.font) {
+      console.log("Changing font: " + font + " from " + this.font)
       this.font = font
-      this.clear()
+      this.dict.clear()
+      await this.fetchAlphabet()
+    } else {
+      console.log("Font is already set to " + font)
     }
   }
 }

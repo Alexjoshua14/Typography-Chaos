@@ -1,78 +1,88 @@
+'use client'
 
-import 'server-only'
-import { FC } from 'react'
+import { FC, use, useEffect, useRef, useState } from 'react'
 
 import ChaosString from './ChaosString'
 import { ChaosDictionary } from '@/lib/ChaosDictionary'
 import { Point } from '@/lib/validators/Point'
-import { chaosPosition, randomPosition } from '@/lib/ChaosPointAnimation'
+import { generateFrames, getBounds } from '@/lib/ChaosStringAnimation'
+import { AnimationType } from '@/lib/validators/AnimationType'
 
 const DEFAULT_FRAME_RATE = 24
 const DEFAULT_DURATION = 8
 
 interface ChaosWrapperProps {
   text: string
+  font?: String
+  size?: number
   duration?: number
   frameRate?: number
+  animationType?: AnimationType
 }
 
-const ChaosWrapper: FC<ChaosWrapperProps> = async ({ text, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE }) => {
-  const frameCount = duration * frameRate
+/**
+ * TODO: I think dict is now being handled on client,
+ * might want to move it back to server 
+ */
+export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE }) => {
+  const [frameCount, setFrameCount] = useState(duration * frameRate)
+  const chaosDictionary = useRef(new ChaosDictionary())
+  const [message, setMessage] = useState('')
+  const [width, setWidth] = useState(0)
+  const [height, setHeight] = useState(0)
+  const [animationFrames, setAnimationFrames] = useState<Point[][]>([])
 
-  let chaosDictionary = new ChaosDictionary()
-  await chaosDictionary.fetchLetters(text)
-  // console.log(chaosDictionary)
-
-  let width = 0
-  let height = 0
-  text.split('').forEach((letter, index) => {
-    width += chaosDictionary.get(letter)?.bounding_box.width ?? 0
-    height = Math.max(height, chaosDictionary.get(letter)?.bounding_box.height ?? 0)
-  })
-
-  const animationFrames: Point[][] = []
-
-  // Generate animation frames
-  const finalAnimationFrame: Point[] = []
-
-  let leftOffset = 0
-
-  text.split('').forEach((letter, index) => {
-    const l = chaosDictionary.get(letter) ?? { bounding_box: { width: 0, height: 0 }, points: [] }
-    l.points.forEach((point) => {
-      const x = point[0] + leftOffset
-      finalAnimationFrame.push([x, point[1], point[2]])
-    })
-    leftOffset += l.bounding_box.width
-  })
-
-  const initialAnimationFrame: Point[] = []
-  for (let i = 0; i < finalAnimationFrame.length; i++) {
-    initialAnimationFrame.push(randomPosition(finalAnimationFrame[i], { width, height }))
-  }
-
-  text.split('').forEach((letter, index) => {
-    const points = chaosDictionary.get(letter)?.points ?? []
-    points.forEach((point) => {
-      initialAnimationFrame.push(point)
-    })
-  })
-
-  for (let i = 1; i < frameCount; i++) {
-    const animationFrame: Point[] = []
-    for (let j = 0; j < finalAnimationFrame.length; j++) {
-      animationFrame.push(chaosPosition(initialAnimationFrame[j], finalAnimationFrame[j], i, frameCount))
+  /**
+   * Fetch any new letters and then update the message
+   */
+  useEffect(() => {
+    const getLetters = async () => {
+      await chaosDictionary.current.fetchLetters(text)
+      setMessage(text)
     }
-    animationFrames.push(animationFrame)
-  }
+    getLetters()
+  }, [text])
 
-  animationFrames.push(finalAnimationFrame)
+  useEffect(() => {
+    console.log("Updating font")
+    const updateFont = async () => {
+      if (!font) return
 
-  console.log(`Animation frame length: ${animationFrames.length}`)
+      console.log("Calling for dict to update font")
+      console.log("Dictionary: " + chaosDictionary.current.toString())
+      await chaosDictionary.current.setFont(font)
+      console.log("Font updated (?)")
+    }
 
+    updateFont()
+  }, [font])
+
+  /**
+   * Update frame count when duration or frame rate changes
+   */
+  useEffect(() => {
+    setFrameCount(duration * frameRate)
+  }, [duration, frameRate])
+
+
+  /** 
+   * Generate animation frames when any of the following change:
+   * - message
+   * - font
+   * - frame count
+   */
+  useEffect(() => {
+    console.log("Generating frames")
+    let bounds = getBounds(chaosDictionary.current, message)
+    setWidth(bounds.w)
+    setHeight(bounds.h)
+
+    let frames = generateFrames(bounds.w, bounds.h, message, chaosDictionary.current, frameCount)
+    setAnimationFrames(frames)
+  }, [message, frameCount])
 
   return (
-    <ChaosString text={text} animationFrames={animationFrames} width={width} height={height} frameCount={frameCount} frameRate={frameRate} />
+    <ChaosString text={message} animationFrames={animationFrames} width={width} height={height} frameCount={frameCount} frameRate={frameRate} animationType={animationType} />
   )
 }
 

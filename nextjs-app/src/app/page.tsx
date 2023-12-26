@@ -1,6 +1,6 @@
 import { Suspense, useMemo } from 'react'
 
-import ChaosWrapper from '@/components/ChaosWrapper'
+import { ChaosWrapper } from '@/components/ChaosWrapper'
 import { Sandbox } from '@/components/sandbox/Sandbox'
 
 export default async function Home() {
@@ -11,10 +11,6 @@ export default async function Home() {
         <Suspense fallback={<div>Loading..</div>}>
           <ChaosWrapper text="Welcome!" />
           <Sandbox />
-          {/* <div>
-            {useMemo(() => <ChaosWrapper text="Hello" />, [])}
-            {useMemo(() => <ChaosWrapper text="World!" />, [])}
-          </div> */}
         </Suspense>
       </div>
     </main>

@@ -1,5 +1,6 @@
 'use client'
 
+import { AnimationType } from '@/lib/validators/AnimationType'
 import { Point } from '@/lib/validators/Point'
 import { FC, useEffect, useMemo, useRef } from 'react'
 
@@ -8,9 +9,10 @@ interface CanvasProps {
   animationFrames: Point[][]
   width: number
   height: number
+  animationType?: AnimationType
 }
 
-const Canvas: FC<CanvasProps> = ({ currentFrame, animationFrames, width, height }) => {
+const Canvas: FC<CanvasProps> = ({ currentFrame, animationFrames, width, height, animationType }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   /**
@@ -50,7 +52,7 @@ const Canvas: FC<CanvasProps> = ({ currentFrame, animationFrames, width, height 
         console.error(err)
       }
     }
-  }, [animationFrames, currentFrame, width, height])
+  }, [animationFrames, currentFrame, width, height, animationType])
 
   return (
     <canvas ref={canvasRef} width={width} height={height} />

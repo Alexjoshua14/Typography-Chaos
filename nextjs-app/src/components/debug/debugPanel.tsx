@@ -2,7 +2,7 @@
 
 import { FC, use, useEffect, useState } from "react"
 import { ControlForm } from "../sandbox/ControlForm"
-import ChaosWrapper from "../ChaosWrapper2"
+import ChaosWrapper from "../ChaosWrapper"
 import DebugChaosWrapper from "./debugChaosWrapper"
 import { AnimationType } from "@/lib/validators/AnimationType"
 

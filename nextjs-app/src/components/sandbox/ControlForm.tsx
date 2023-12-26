@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, useEffect, useState } from 'react'
-import ChaosWrapper from '../ChaosWrapper2'
+import ChaosWrapper from '../ChaosWrapper'
 import {
   Form,
   FormControl,
@@ -19,20 +19,11 @@ import { Button } from '../ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { getAvailableFonts } from '@/lib/pythonAPI'
 import { AnimationType } from '@/lib/validators/AnimationType'
+import { formSchema } from '@/lib/validators/ControlForm'
 
 interface ControlForm {
   updateFields: (fields: z.infer<typeof formSchema>) => void
 }
-
-const formSchema = z.object({
-  text: z.string().min(1, {
-    message: 'Please enter some text'
-  }),
-  duration: z.number().positive(),
-  frameRate: z.number().int().positive().default(24),
-  font: z.string().default('Montserrat'),
-  animationType: z.nativeEnum(AnimationType).default(AnimationType.Reverse)
-})
 
 /**
  * 
@@ -110,7 +101,7 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {fontOptions.map((font) => (
-                      <SelectItem key={font} value={font}>{font}</SelectItem>
+                      <SelectItem key={font} value={font}>{font.replace("_", " ")}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
