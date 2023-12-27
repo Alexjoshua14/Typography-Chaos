@@ -14,6 +14,8 @@ interface ChaosStringProps {
   animationFrames: Point[][]
   frameCount: number
   frameRate: number
+  currFrame?: number
+  repeatDelay?: number
 }
 
 /**
@@ -22,13 +24,17 @@ interface ChaosStringProps {
  * @param param0 
  * @returns 
  */
-const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate, animationType = AnimationType.Reverse }) => {
+const ChaosString: FC<ChaosStringProps> = ({ text, width, height, animationFrames, frameCount, frameRate, animationType = AnimationType.Reverse, currFrame = frameCount - 1, repeatDelay }) => {
+  if (animationType === AnimationType.Manual && currFrame === undefined) {
+    console.error("AnimationType.Manual requires currFrame to be defined. Defaulting to AnimationType.Reverse")
+    animationType = AnimationType.Reverse
+  }
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const { currentFrame } = useAnimation({ canvasRef, animationFrames, frameCount, frameRate, animationType })
+  const { currentFrame } = useAnimation({ canvasRef, animationFrames, frameCount, frameRate, animationType, repeatDelay })
 
   return (
     <div className="relative flex w-fit">
-      <Canvas animationFrames={animationFrames} currentFrame={currentFrame} width={width} height={height} animationType={animationType} />
+      <Canvas animationFrames={animationFrames} currentFrame={animationType === AnimationType.Manual ? currFrame : currentFrame} width={width} height={height} animationType={animationType} />
       <div className="visually-hidden">
         {text}
       </div>

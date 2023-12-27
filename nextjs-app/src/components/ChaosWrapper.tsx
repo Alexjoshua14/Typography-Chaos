@@ -18,13 +18,15 @@ interface ChaosWrapperProps {
   duration?: number
   frameRate?: number
   animationType?: AnimationType
+  currentFrame?: number
+  repeatDelay?: number
 }
 
 /**
  * TODO: I think dict is now being handled on client,
  * might want to move it back to server 
  */
-export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE }) => {
+export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE, currentFrame, repeatDelay }) => {
   const [frameCount, setFrameCount] = useState(duration * frameRate)
   const chaosDictionary = useRef(new ChaosDictionary())
   const [message, setMessage] = useState('')
@@ -81,8 +83,18 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType,
     setAnimationFrames(frames)
   }, [message, frameCount])
 
+  console.log("Rendering ChaosWrapper with Animation Type: " + animationType)
+
   return (
-    <ChaosString text={message} animationFrames={animationFrames} width={width} height={height} frameCount={frameCount} frameRate={frameRate} animationType={animationType} />
+    <ChaosString
+      text={message}
+      animationFrames={animationFrames}
+      width={width} height={height}
+      frameCount={frameCount} frameRate={frameRate}
+      animationType={animationType}
+      currFrame={animationType === AnimationType.Manual ? currentFrame : undefined}
+      repeatDelay={repeatDelay}
+    />
   )
 }
 
