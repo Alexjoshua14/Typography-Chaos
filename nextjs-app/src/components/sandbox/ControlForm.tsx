@@ -68,77 +68,78 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="text"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Text
-              </FormLabel>
-              <FormControl>
-                <Input placeholder='Hello' {...field} />
-              </FormControl>
-              <FormDescription>
-                The text to animate
-              </FormDescription>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="font"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Font
-              </FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a font" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {fontOptions.map((font) => (
-                      <SelectItem key={font} value={font}>{font.replace("_", " ")}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>
-                The font to use
-              </FormDescription>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="animationType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Animation Type
-              </FormLabel>
-              <FormControl>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select an animation type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(AnimationType).map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormDescription>
-                The type of animation to use
-              </FormDescription>
-            </FormItem>
-          )}
-        />
-        {/* <FormField
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <div className="grid grid-flow-row gap-x-8 gap-y-4 grid-cols-2 w-[540px] border-2 p-4 rounded-lg">
+          <FormField
+            control={form.control}
+            name="text"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>
+                  Text
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder='Hello' {...field} />
+                </FormControl>
+                <FormDescription>
+                  The text to animate
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="font"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Font
+                </FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fontOptions.map((font) => (
+                        <SelectItem key={font} value={font}>{font.replace("_", " ")}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormDescription>
+                  The font to use
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="animationType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  Animation Type
+                </FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an animation type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(AnimationType).map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormDescription>
+                  The type of animation to use
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+          <FormField
             control={form.control}
             name="duration"
             render={({ field }) => (
@@ -149,14 +150,16 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
                 <FormControl>
                   <Input
                     type="text"
-                    inputMode='decimal'
+                    pattern="[0-9]*.?[0-9]+"
+                    inputMode='numeric'
                     min={0}
+                    step={.01}
                     {...field}
                   />
                 </FormControl>
                 <FormDescription>
-                  The duration of the animation in seconds
-                  {form.formState.errors.duration?.message}
+                  {`The duration of the animation in seconds`}
+                  {`${form.formState.errors.duration?.message}`}
                 </FormDescription>
               </FormItem>
             )}
@@ -184,7 +187,8 @@ export const ControlForm: FC<ControlForm> = ({ updateFields }) => {
                 </FormDescription>
               </FormItem>
             )}
-          /> */}
+          />
+        </div>
         <Button type="submit">Animate</Button>
       </form>
     </Form>

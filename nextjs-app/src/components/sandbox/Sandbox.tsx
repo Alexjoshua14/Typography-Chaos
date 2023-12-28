@@ -36,7 +36,7 @@ export const Sandbox: FC<SandboxProps> = ({ }) => {
   return (
     <div className="flex flex-col items-center gap-4">
       <ControlForm updateFields={updateFields} />
-      <ChaosWrapper text={text} duration={duration} font={font} animationType={animationType} />
+      <ChaosWrapper text={text} duration={duration} font={font} animationType={animationType} copyField />
     </div>
   )
 }

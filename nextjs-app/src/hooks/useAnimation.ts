@@ -1,8 +1,7 @@
 
-import { Context, FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimationType } from '@/lib/validators/AnimationType'
 import { Point } from '@/lib/validators/Point'
-import { clear } from 'console'
 import { delayRepeat } from '@/lib/AnimationUtils'
 
 interface AnimationProps {

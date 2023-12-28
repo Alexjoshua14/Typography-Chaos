@@ -7,6 +7,7 @@ import { ChaosDictionary } from '@/lib/ChaosDictionary'
 import { Point } from '@/lib/validators/Point'
 import { generateFrames, getBounds } from '@/lib/ChaosStringAnimation'
 import { AnimationType } from '@/lib/validators/AnimationType'
+import { CopyField } from './sandbox/CopyField'
 
 const DEFAULT_FRAME_RATE = 24
 const DEFAULT_DURATION = 8
@@ -20,13 +21,14 @@ interface ChaosWrapperProps {
   animationType?: AnimationType
   currentFrame?: number
   repeatDelay?: number
+  copyField?: boolean
 }
 
 /**
  * TODO: I think dict is now being handled on client,
  * might want to move it back to server 
  */
-export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE, currentFrame, repeatDelay }) => {
+export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType, duration = DEFAULT_DURATION, frameRate = DEFAULT_FRAME_RATE, currentFrame, repeatDelay, copyField }) => {
   const [frameCount, setFrameCount] = useState(duration * frameRate)
   const chaosDictionary = useRef(new ChaosDictionary())
   const [message, setMessage] = useState('')
@@ -46,14 +48,14 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType,
   }, [text])
 
   useEffect(() => {
-    console.log("Updating font")
+    // console.log("Updating font")
     const updateFont = async () => {
       if (!font) return
 
-      console.log("Calling for dict to update font")
-      console.log("Dictionary: " + chaosDictionary.current.toString())
+      // console.log("Calling for dict to update font")
+      // console.log("Dictionary: " + chaosDictionary.current.toString())
       await chaosDictionary.current.setFont(font)
-      console.log("Font updated (?)")
+      // console.log("Font updated (?)")
     }
 
     updateFont()
@@ -74,7 +76,7 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType,
    * - frame count
    */
   useEffect(() => {
-    console.log("Generating frames")
+    // console.log("Generating frames")
     let bounds = getBounds(chaosDictionary.current, message)
     setWidth(bounds.w)
     setHeight(bounds.h)
@@ -83,18 +85,21 @@ export const ChaosWrapper: FC<ChaosWrapperProps> = ({ text, font, animationType,
     setAnimationFrames(frames)
   }, [message, frameCount])
 
-  console.log("Rendering ChaosWrapper with Animation Type: " + animationType)
+  // console.log("Rendering ChaosWrapper with Animation Type: " + animationType)
 
   return (
-    <ChaosString
-      text={message}
-      animationFrames={animationFrames}
-      width={width} height={height}
-      frameCount={frameCount} frameRate={frameRate}
-      animationType={animationType}
-      currFrame={animationType === AnimationType.Manual ? currentFrame : undefined}
-      repeatDelay={repeatDelay}
-    />
+    <>
+      <ChaosString
+        text={message}
+        animationFrames={animationFrames}
+        width={width} height={height}
+        frameCount={frameCount} frameRate={frameRate}
+        animationType={animationType}
+        currFrame={animationType === AnimationType.Manual ? currentFrame : undefined}
+        repeatDelay={repeatDelay}
+      />
+      {copyField && <CopyField animationFrames={animationFrames} />}
+    </>
   )
 }
 
